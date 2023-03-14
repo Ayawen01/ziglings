@@ -1,21 +1,20 @@
 //
-// Oh no! This program is supposed to print "Hello world!" but it needs
-// your help!
+// 哦，不！这个程序本来应该打印"Hello world!"，但它需要你的帮助！
 //
 //
-// Zig functions are private by default but the main() function should
-// be public.
+// Zig函数默认是私有的，但是main()函数应该是公开的。
 //
-// A function is declared public with the "pub" statement like so:
+//
+// 一个函数用"pub"语句声明为公开，像这样：
 //
 //     pub fn foo() void {
 //         ...
 //     }
 //
-// Try to fix the program and run `ziglings` to see if it works!
+// 尝试修复程序并运行 ziglings 来看看它是否工作！
 //
 const std = @import("std");
 
-fn main() void {
+pub fn main() void {
     std.debug.print("Hello world!\n", .{});
 }
