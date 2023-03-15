@@ -1,20 +1,18 @@
 //
-// Zig has some fun array operators.
+// Zig 有一些有趣的数组操作符。
 //
-// You can use '++' to concatenate two arrays:
+// 你可以用'++'来连接两个数组：
 //
 //   const a = [_]u8{ 1,2 };
 //   const b = [_]u8{ 3,4 };
-//   const c = a ++ b ++ [_]u8{ 5 }; // equals 1 2 3 4 5
+//   const c = a ++ b ++ [_]u8{ 5 }; // 等于 1 2 3 4 5
 //
-// You can use '**' to repeat an array:
+// 你可以用'**'来重复一个数组：
 //
-//   const d = [_]u8{ 1,2,3 } ** 2; // equals 1 2 3 1 2 3
+//   const d = [_]u8{ 1,2,3 } ** 2; // 等于 1 2 3 1 2 3
 //
-// Note that both '++' and '**' only operate on arrays while your
-// program is _being compiled_. This special time is known in Zig
-// parlance as "comptime" and we'll learn plenty more about that
-// later.
+// 注意，'++'和'**'只在你的程序被编译时起作用。
+// 这个特殊的时间在 Zig 中被称为"comptime", 我们稍后会学习更多关于它的内容。
 //
 const std = @import("std");
 
@@ -22,25 +20,23 @@ pub fn main() void {
     const le = [_]u8{ 1, 3 };
     const et = [_]u8{ 3, 7 };
 
-    // (Problem 1)
-    // Please set this array concatenating the two arrays above.
-    // It should result in: 1 3 3 7
-    const leet = ???;
+    // (问题1)
+    // 请设置这个数组，连接上面两个数组。
+    // 它应该得到：1 3 3 7
+    const leet = le ++ et;
 
-    // (Problem 2)
-    // Please set this array using repetition.
-    // It should result in: 1 0 0 1 1 0 0 1 1 0 0 1
-    const bit_pattern = [_]u8{ ??? } ** 3;
+    // (问题2)
+    // 请设置这个数组，使用重复。
+    // 它应该得到：1 0 0 1 1 0 0 1 1 0 0 1
+    const bit_pattern = [_]u8{ 1, 0, 0, 1 } ** 3;
 
-    // Okay, that's all of the problems. Let's see the results.
+    // 好了，这就是所有的问题。让我们看看结果。
     //
-    // We could print these arrays with leet[0], leet[1],...but let's
-    // have a little preview of Zig 'for' loops instead:
+    // 我们可以用leet[0], leet1,...来打印这些数组，但是让我们先预览一下 Zig 的 for 循环吧：
     //
     //    for (<item array>) |item| { <do something with item> }
     //
-    // Don't worry, we'll cover looping properly in upcoming
-    // lessons.
+    // 别担心，我们会在接下来的课程中适当地介绍循环。
     //
     std.debug.print("LEET: ", .{});
 
