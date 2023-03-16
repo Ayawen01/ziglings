@@ -1,43 +1,39 @@
 //
-// Quiz time! Let's see if you can fix this whole program.
+// 测验时间！让我们看看你能否修复这个整个程序。
 //
-// You'll have to think about this one a bit.
+// 你必须对这个问题有点思考。
 //
-// Let the compiler tell you what's wrong.
+// 让编译器告诉你哪里出错了。
 //
-// Start at the top.
+// 从最上面开始。
 //
 const std = @import("std");
 
 pub fn main() void {
-    // What is this nonsense? :-)
+    // 这是什么胡说八道？:-)
     const letters = "YZhifg";
 
-    // Note: usize is an unsigned integer type used for...sizes.
-    // The exact size of usize depends on the target CPU
-    // architecture. We could have used a u8 here, but usize is
-    // the idiomatic type to use for array indexing.
+    // 注意：usize 是一个无符号整数类型，用于表示...大小。
+    // usize 的确切大小取决于目标 CPU 架构。
+    // 我们本可以在这里使用 u8，但 usize 是用于数组索引的惯用类型。
     //
-    // There IS a problem on this line, but 'usize' isn't it.
-    const x: usize = 1;
+    // 这一行有一个问题，但 'usize' 不是它。
+    var x: usize = 1;
 
-    // Note: When you want to declare memory (an array in this
-    // case) without putting anything in it, you can set it to
-    // 'undefined'. There is no problem on this line.
+    // 注意：当你想要声明内存（在这种情况下是一个数组）而不放入任何东西时，
+    // 你可以将其设置为 'undefined'。这一行没有问题。
     var lang: [3]u8 = undefined;
 
-    // The following lines attempt to put 'Z', 'i', and 'g' into the
-    // 'lang' array we just created by indexing the array
-    // 'letters' with the variable 'x'. As you can see above, x=1
-    // to begin with.
+    // 下面的几行试图通过用变量 'x' 索引数组 'letters' 将 'Z'、'i' 和 'g' 放入我们刚刚创建的 'lang' 数组中。
+    // 正如你在上面看到的，x=1 开始时。
     lang[0] = letters[x];
 
     x = 3;
-    lang[???] = letters[x];
+    lang[1] = letters[x];
 
-    x = ???;
-    lang[2] = letters[???];
+    x = letters.len - 1;
+    lang[2] = letters[x];
 
-    // We want to "Program in Zig!" of course:
+    // 我们当然想要 "Program in Zig!"：
     std.debug.print("Program in {s}!\n", .{lang});
 }
