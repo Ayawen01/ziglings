@@ -1,10 +1,9 @@
 //
-// Behold the 'for' loop! For loops let you execute code for each
-// element of an array:
+// 瞧瞧"for"循环！for循环让你对数组中的每个元素执行代码：
 //
 //     for (items) |item| {
 //
-//         // Do something with item
+//         // 对item做一些事情
 //
 //     }
 //
@@ -15,7 +14,7 @@ pub fn main() void {
 
     std.debug.print("A Dramatic Story: ", .{});
 
-    for (???) |???| {
+    for (story) |scene| {
         if (scene == 'h') std.debug.print(":-)  ", .{});
         if (scene == 's') std.debug.print(":-(  ", .{});
         if (scene == 'n') std.debug.print(":-|  ", .{});
@@ -23,5 +22,4 @@ pub fn main() void {
 
     std.debug.print("The End.\n", .{});
 }
-// Note that "for" loops also work on things called "slices"
-// which we'll see later.
+// 注意，"for"循环也适用于我们稍后会看到的叫做"切片"的东西。
