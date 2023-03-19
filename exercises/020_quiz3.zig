@@ -1,9 +1,8 @@
 //
-// Let's see if we can make use of some of the things we've learned so far.
-// We'll create two functions: one that contains a "for" loop and one
-// that contains a "while" loop.
+// 让我们看看能否利用一些我们已经学过的东西。
+// 我们将创建两个函数：一个包含 "for" 循环，另一个包含 "while" 循环。
 //
-// Both of these are simply labeled "loop" below.
+// 这两个都简单地标记为 "loop"。
 //
 const std = @import("std");
 
@@ -14,30 +13,29 @@ pub fn main() void {
     std.debug.print("\n", .{});
 }
 
-// You won't see this every day: a function that takes an array with
-// exactly four u16 numbers. This is not how you would normally pass
-// an array to a function. We'll learn about slices and pointers in
-// a little while. For now, we're using what we know.
+// 你不会每天都看到这样的：一个接受一个恰好有四个 u16 数字的数组的函数。
+// 这不是你通常给函数传递数组的方式。
+// 我们稍后会学习切片和指针。
+// 现在，我们使用我们所知道的。
 //
-// This function prints, but does not return anything.
+// 这个函数打印，但不返回任何东西。
 //
-fn printPowersOfTwo(numbers: [4]u16) ??? {
-    loop (numbers) |n| {
+fn printPowersOfTwo(numbers: [4]u16) void {
+    for (numbers) |n| {
         std.debug.print("{} ", .{twoToThe(n)});
     }
 }
 
-// This function bears a striking resemblance to twoToThe() in the last
-// exercise. But don't be fooled! This one does the math without the aid
-// of the standard library!
+// 这个函数和上一练习中的 twoToThe() 非常相似。
+// 但是不要被骗了！这个函数在没有标准库的帮助下做数学运算！
 //
-fn twoToThe(number: u16) ??? {
+fn twoToThe(number: u16) u16 {
     var n: u16 = 0;
     var total: u16 = 1;
 
-    loop (n < number) : (n += 1) {
+    while (n < number) : (n += 1) {
         total *= 2;
     }
 
-    return ???;
+    return total;
 }

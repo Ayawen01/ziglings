@@ -1,34 +1,31 @@
 //
-// For loops also let you use the "index" of the iteration, a number
-// that counts up with each iteration. To access the index of iteration,
-// specify a second condition as well as a second capture value.
+// for循环还可以让你使用迭代的“索引”，一个随着每次迭代而增加的数字。
+// 要访问迭代的索引，除了指定第二个捕获值外，还要指定第二个条件。
 //
 //     for (items, 0..) |item, index| {
 //
-//         // Do something with item and index
+//         // 使用item和index做一些事情
 //
 //     }
 //
-// You can name "item" and "index" anything you want. "i" is a popular
-// shortening of "index". The item name is often the singular form of
-// the items you're looping through.
+// 你可以把“item”和“index”命名为任何你想要的名字。
+// “i”是“index”的常用缩写。
+// 项目名通常是你循环遍历的项目的单数形式。
 //
 const std = @import("std");
 
 pub fn main() void {
-    // Let's store the bits of binary number 1101 in
-    // 'little-endian' order (least significant byte first):
+    // 让我们以“小端”顺序（最低有效字节在前）存储二进制数1101的位：
     const bits = [_]u8{ 1, 0, 1, 1 };
     var value: u32 = 0;
 
-    // Now we'll convert the binary bits to a number value by adding
-    // the value of the place as a power of two for each bit.
+    // 现在我们将通过为每个位添加其位置作为2的幂来将二进制位转换为数字值。
     //
-    // See if you can figure out the missing pieces:
-    for (bits, ???) |bit, ???| {
-        // Note that we convert the usize i to a u32 with
-        // @intCast(), a builtin function just like @import().
-        // We'll learn about these properly in a later exercise.
+    // 看看你能否找出缺失的部分：
+    for (bits, 0..) |bit, i| {
+        // 注意，我们用@intCast()将usize i转换为u32，
+        // 这是一个内置函数，就像@import()一样。
+        // 我们将在后面的练习中正确地学习这些内容。
         var place_value = std.math.pow(u32, 2, @intCast(u32, i));
         value += place_value * bit;
     }

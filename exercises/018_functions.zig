@@ -1,30 +1,28 @@
 //
-// Functions! We've already created lots of functions called 'main()'. Now let's
-// do something different:
+// 函数！我们已经创建了许多名为'main()'的函数。现在让我们做一些不同的事情：
 //
 //     fn foo(n: u8) u8 {
 //         return n + 1;
 //     }
 //
-// The foo() function above takes a number 'n' and returns a number that is
-// larger by one.
+// 上面的foo()函数接受一个数字'n'并返回一个大一的数字。
 //
-// Note the input parameter 'n' and return types are both u8.
+// 注意输入参数'n'和返回类型都是u8。
 //
 const std = @import("std");
 
 pub fn main() void {
-    // The new function deepThought() should return the number 42. See below.
+    // 新函数deepThought()应该返回数字42。见下面。
     const answer: u8 = deepThought();
 
     std.debug.print("Answer to the Ultimate Question: {}\n", .{answer});
 }
 
-// Please define the deepThought() function below.
+// 请在下面定义deepThought()函数。
 //
-// We're just missing a couple things. One thing we're NOT missing is the
-// keyword "pub", which is not needed here. Can you guess why?
+// 我们只缺少几件事。我们不缺少的一件事是关键字"pub"，这里不需要它。
+// 你能猜出为什么吗？
 //
-??? deepThought() ??? {
-    return 42; // Number courtesy Douglas Adams
+fn deepThought() u8 {
+    return 42; // 数字由道格拉斯·亚当斯提供
 }
