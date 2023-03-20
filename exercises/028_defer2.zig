@@ -1,6 +1,5 @@
 //
-// Now that you know how "defer" works, let's do something more
-// interesting with it.
+// 现在你知道了“defer”是怎么工作的，让我们用它做些更有趣的事情。
 //
 const std = @import("std");
 
@@ -12,13 +11,13 @@ pub fn main() void {
     std.debug.print("done.\n", .{});
 }
 
-// This function is _supposed_ to print an animal name in parentheses
-// like "(Goat) ", but we somehow need to print the end parenthesis
-// even though this function can return in four different places!
+// 这个函数_应该_打印一个括号里的动物名字
+// 比如“(Goat) ”，但我们不知道怎么样才能打印出右括号
+// 即使这个函数有四个不同的返回位置！
 fn printAnimal(animal: u8) void {
     std.debug.print("(", .{});
 
-    std.debug.print(") ", .{}); // <---- how?!
+    defer std.debug.print(") ", .{}); // <---- 怎么办？！
 
     if (animal == 'g') {
         std.debug.print("Goat", .{});
