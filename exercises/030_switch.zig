@@ -1,8 +1,7 @@
 //
-// The "switch" statement lets you match the possible values of an
-// expression and perform a different action for each.
+// switch语句可以让你匹配一个表达式的可能值，并根据每个值执行不同的动作。
 //
-// This switch:
+// 这个 switch:
 //
 //     switch (players) {
 //         1 => startOnePlayerGame(),
@@ -13,7 +12,7 @@
 //         }
 //     }
 //
-// Is equivalent to this if/else:
+// 等价于这个 this if/else:
 //
 //     if (players == 1) startOnePlayerGame();
 //     else if (players == 2) startTwoPlayerGame();
@@ -39,13 +38,13 @@ pub fn main() void {
             8 => std.debug.print("H", .{}),
             9 => std.debug.print("I", .{}),
             10 => std.debug.print("J", .{}),
-            // ... we don't need everything in between ...
+            // ... 我们不需要中间的所有内容 ...
             25 => std.debug.print("Y", .{}),
             26 => std.debug.print("Z", .{}),
-            // Switch statements must be "exhaustive" (there must be a
-            // match for every possible value).  Please add an "else"
-            // to this switch to print a question mark "?" when c is
-            // not one of the existing matches.
+            // switch语句必须是“穷举”的（必须有一个匹配每个可能值）。
+            // 请在这个switch中添加一个“else”，
+            // 当c不是现有匹配之一时，打印一个问号“?”。
+            else => std.debug.print("?", .{}),
         }
     }
 
