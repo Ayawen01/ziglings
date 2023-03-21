@@ -1,10 +1,7 @@
 //
-// Grouping values in structs is not merely convenient. It also allows
-// us to treat the values as a single item when storing them, passing
-// them to functions, etc.
+// 在结构体中分组值不仅方便，而且还允许我们在存储它们、传递给函数等时，将它们作为一个单独的项来处理。
 //
-// This exercise demonstrates how we can store structs in an array and
-// how doing so lets us print them using a loop.
+// 这个练习演示了我们如何在数组中存储结构体，以及这样做如何让我们使用循环来打印它们。
 //
 const std = @import("std");
 
@@ -33,17 +30,22 @@ pub fn main() void {
         .experience = 10,
     };
 
-    // Please add "Zump the Loud" with the following properties:
+    // 请添加“Zump the Loud”，并具有以下属性：
     //
     //     class      bard
     //     gold       10
     //     health     100
     //     experience 20
     //
-    // Feel free to run this program without adding Zump. What does
-    // it do and why?
+    // 您可以在不添加Zump的情况下运行这个程序。它会做什么，为什么呢？
+    chars[1] = Character{
+        .class = Class.bard,
+        .gold = 10,
+        .health = 100,
+        .experience = 20,
+    };
 
-    // Printing all RPG characters in a loop:
+    // 在循环中打印所有RPG角色：
     for (chars, 0..) |c, num| {
         std.debug.print("Character {} - G:{} H:{} XP:{}\n", .{
             num + 1, c.gold, c.health, c.experience,
@@ -51,8 +53,6 @@ pub fn main() void {
     }
 }
 
-// If you tried running the program without adding Zump as mentioned
-// above, you get what appear to be "garbage" values. In debug mode
-// (which is the default), Zig writes the repeating pattern "10101010"
-// in binary (or 0xAA in hex) to all undefined locations to make them
-// easier to spot when debugging.
+// 如果你按照上面提到的，在不添加Zump的情况下尝试运行程序，你会得到看起来像“垃圾”值。
+// 在调试模式下（默认情况下），Zig会将重复模式“10101010”
+// （二进制）或0xAA（十六进制）写入所有未定义的位置，以便在调试时更容易发现它们。
