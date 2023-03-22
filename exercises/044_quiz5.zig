@@ -1,12 +1,12 @@
 //
-//    "Elephants walking
-//     Along the trails
+//    "大象们走着
+//     沿着小径
 //
-//     Are holding hands
-//     By holding tails."
+//     它们手拉手
+//     通过拉尾巴。"
 //
-//     from Holding Hands
-//       by Lenore M. Link
+//     来自《手拉手》
+//       作者：Lenore M. Link
 //
 const std = @import("std");
 
@@ -18,13 +18,15 @@ const Elephant = struct {
 
 pub fn main() void {
     var elephantA = Elephant{ .letter = 'A' };
-    // (Please add Elephant B here!)
+    // (请在这里添加大象B！)
+    var elephantB = Elephant{ .letter = 'B' };
     var elephantC = Elephant{ .letter = 'C' };
 
-    // Link the elephants so that each tail "points" to the next elephant.
-    // They make a circle: A->B->C->A...
+    // 将大象链接起来，使每个尾巴“指向”下一个大象。
+    // 它们形成了一个圈：A->B->C->A...
     elephantA.tail = &elephantB;
-    // (Please link Elephant B's tail to Elephant C here!)
+    // (请在这里将大象B的尾巴链接到大象C！)
+    elephantB.tail = &elephantC;
     elephantC.tail = &elephantA;
 
     visitElephants(&elephantA);
@@ -32,10 +34,10 @@ pub fn main() void {
     std.debug.print("\n", .{});
 }
 
-// This function visits all elephants once, starting with the
-// first elephant and following the tails to the next elephant.
-// If we did not "mark" the elephants as visited (by setting
-// visited=true), then this would loop infinitely!
+// 这个函数访问所有的大象一次，从第一个大象开始，
+// 沿着尾巴到下一个大象。
+// 如果我们不“标记”已访问过的大象（通过设置visited=true），
+// 那么这将无限循环！
 fn visitElephants(first_elephant: *Elephant) void {
     var e = first_elephant;
 

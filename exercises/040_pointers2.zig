@@ -1,27 +1,24 @@
 //
-// It's important to note that variable pointers and constant pointers
-// are different types.
+// 需要注意的是，变量指针和常量指针是不同的类型。
 //
-// Given:
+// 给定：
 //
 //     var foo: u8 = 5;
 //     const bar: u8 = 5;
 //
-// Then:
+// 那么：
 //
-//     &foo is of type "*u8"
-//     &bar is of type "*const u8"
+//     &foo 的类型是 "*u8"
+//     &bar 的类型是 "*const u8"
 //
-// You can always make a constant pointer to a variable, but you cannot
-// make a variable pointer to a constant. This sounds like a logic puzzle,
-// but it just means that once data is declared immutable, you can't
-// coerce it to a mutable type. It's a safety thing (to prevent mistakes).
+// 你总是可以用一个变量来创建一个常量指针，但你不能用一个常量来创建一个变量指针。这听起来像一个逻辑谜题，
+// 但它只是意味着一旦数据被声明为不可变，你就不能将它强制转换为可变类型。这是一种安全性（为了防止错误）。
 //
 const std = @import("std");
 
 pub fn main() void {
     const a: u8 = 12;
-    const b: *u8 = &a; // fix this!
+    const b: *const u8 = &a; // 修复这个！
 
     std.debug.print("a: {}, b: {}\n", .{ a, b.* });
 }

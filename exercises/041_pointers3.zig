@@ -1,7 +1,6 @@
 //
-// The tricky part is that the pointer's mutability (var vs const) refers
-// to the ability to change what the pointer POINTS TO, not the ability
-// to change the VALUE at that location!
+// 棘手的部分是，指针的可变性（var vs const）指的是
+// 改变指针指向的能力，而不是改变该位置的值的能力！
 //
 //     const locked: u8 = 5;
 //     var unlocked: u8 = 10;
@@ -9,19 +8,18 @@
 //     const p1: *const u8 = &locked;
 //     var   p2: *const u8 = &locked;
 //
-// Both p1 and p2 point to constant values which cannot change. However,
-// p2 can be changed to point to something else and p1 cannot!
+// p1 和 p2 都指向不能改变的常量值。然而，
+// p2 可以被改变为指向别的东西，而 p1 不行！
 //
 //     const p3: *u8 = &unlocked;
 //     var   p4: *u8 = &unlocked;
 //     const p5: *const u8 = &unlocked;
 //     var   p6: *const u8 = &unlocked;
 //
-// Here p3 and p4 can both be used to change the value they point to but
-// p3 cannot point at anything else.
-// What's interesting is that p5 and p6 act like p1 and p2, but point to
-// the value at "unlocked". This is what we mean when we say that we can
-// make a constant reference to any value!
+// 这里 p3 和 p4 都可以用来改变它们指向的值，但是
+// 有趣的是，p5 和 p6 的行为像 p1 和 p2，但是指向
+// "unlocked" 处的值。这就是我们说我们可以对任何值
+// 做一个常量引用的意思！
 //
 const std = @import("std");
 
@@ -29,9 +27,8 @@ pub fn main() void {
     var foo: u8 = 5;
     var bar: u8 = 10;
 
-    // Please define pointer "p" so that it can point to EITHER foo or
-    // bar AND change the value it points to!
-    ??? p: ??? = undefined;
+    // 请定义一个指针 "p"，使它可以指向 foo 或 bar，并且可以改变它所指向的值！
+    var p: *u8 = undefined;
 
     p = &foo;
     p.* += 1;

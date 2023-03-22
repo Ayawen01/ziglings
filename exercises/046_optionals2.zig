@@ -1,27 +1,26 @@
 //
-// Now that we have optional types, we can apply them to structs.
-// The last time we checked in with our elephants, we had to link
-// all three of them together in a "circle" so that the last tail
-// linked to the first elephant. This is because we had NO CONCEPT
-// of a tail that didn't point to another elephant!
+// 现在我们有了可选类型，我们可以把它们应用到结构体上。
+// 上次我们检查大象的时候，我们不得不把所有三只大象连接在一起，
+// 形成一个“圆圈”，这样最后一条尾巴就指向了第一只大象。
+// 这是因为我们没有一个不指向另一只大象的尾巴的概念！
 //
-// We also introduce the handy ".?" shortcut:
+// 我们还介绍了一个方便的“.?”快捷方式：
 //
 //     const foo = bar.?;
 //
-// is the same as
+// 等同于
 //
 //     const foo = bar orelse unreachable;
 //
-// See if you can find where we use this shortcut below.
+// 看看你能否在下面找到我们使用这个快捷方式的地方。
 //
-// Now let's make those elephant tails optional!
+// 现在让我们把大象的尾巴变成可选的！
 //
 const std = @import("std");
 
 const Elephant = struct {
     letter: u8,
-    tail: *Elephant = null, // Hmm... tail needs something...
+    tail: ?*Elephant = null, // 嗯……尾巴需要点什么……
     visited: bool = false,
 };
 
@@ -30,7 +29,7 @@ pub fn main() void {
     var elephantB = Elephant{ .letter = 'B' };
     var elephantC = Elephant{ .letter = 'C' };
 
-    // Link the elephants so that each tail "points" to the next.
+    // 把大象连接起来，让每条尾巴“指向”下一只。
     elephantA.tail = &elephantB;
     elephantB.tail = &elephantC;
 
@@ -39,8 +38,8 @@ pub fn main() void {
     std.debug.print("\n", .{});
 }
 
-// This function visits all elephants once, starting with the
-// first elephant and following the tails to the next elephant.
+// 这个函数会访问所有的大象一次，从第一只开始，
+// 沿着尾巴找到下一只。当我们遇到一个不指向另一个元素的尾巴时，我们应该停止。
 fn visitElephants(first_elephant: *Elephant) void {
     var e = first_elephant;
 
@@ -48,10 +47,8 @@ fn visitElephants(first_elephant: *Elephant) void {
         std.debug.print("Elephant {u}. ", .{e.letter});
         e.visited = true;
 
-        // We should stop once we encounter a tail that
-        // does NOT point to another element. What can
-        // we put here to make that happen?
-        if (e.tail == null) ???;
+        // 我们可以在这里放什么东西来实现这个功能呢？
+        if (e.tail == null) break;
 
         e = e.tail.?;
     }
