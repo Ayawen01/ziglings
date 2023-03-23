@@ -1,26 +1,26 @@
 //
-// If you thought the last exercise was a deep dive, hold onto your
-// hat because we are about to descend into the computer's molten
-// core.
+// 如果你觉得上一个练习已经很深入了，那就抓紧你的
+// 帽子吧，因为我们即将下降到计算机的熔融
+// 核心。
 //
-// (Shouting) DOWN HERE, THE BITS AND BYTES FLOW FROM RAM TO THE CPU
-// LIKE A HOT, DENSE FLUID. THE FORCES ARE INCREDIBLE. BUT HOW DOES
-// ALL OF THIS RELATE TO THE DATA IN OUR ZIG PROGRAMS? LET'S HEAD
-// BACK UP TO THE TEXT EDITOR AND FIND OUT.
+// (大声喊道)在这里，位和字节从RAM流向CPU
+// 就像一种热、密的液体。力量是不可思议的。
+// 但是这一切又如何与我们ZIG程序中的数据相关呢？让我们回到
+// 文本编辑器，找出答案。
 //
-// Ah, that's better. Now we can look at some familiar Zig code.
+// 啊，这样好多了。现在我们可以看一些熟悉的Zig代码。
 //
-// @import() adds the imported code to your own. In this case, code
-// from the standard library is added to your program and compiled
-// with it. All of this will be loaded into RAM when it runs. Oh, and
-// that thing we name "const std"? That's a struct!
+// @import()将导入的代码添加到你自己的代码中。
+// 在这种情况下，来自标准库的代码被添加到你的程序中，并与它一起编译。
+// 所有这些都将在运行时加载到RAM中。
+// 哦，还有那个我们命名为"const std"? 那是一个结构体!
 //
 const std = @import("std");
 
-// Remember our old RPG Character struct? A struct is really just a
-// very convenient way to deal with memory. These fields (gold,
-// health, experience) are all values of a particular size. Add them
-// together and you have the size of the struct as a whole.
+// 还记得我们以前的RPG角色结构体吗？
+// 一个结构体其实就是一种非常方便地处理内存的方式。
+// 这些字段(金币、生命值、经验值)都是特定大小的值。
+// 把它们加起来，你就得到了整个结构体的大小。
 
 const Character = struct {
     gold: u32 = 0,
@@ -28,11 +28,11 @@ const Character = struct {
     experience: u32 = 0,
 };
 
-// Here we create a character called "the_narrator" that is a constant
-// (immutable) instance of a Character struct. It is stored in your
-// program as data, and like the instruction code, it is loaded into
-// RAM when your program runs. The relative location of this data in
-// memory is hard-coded and neither the address nor the value changes.
+// 这里我们创建了一个叫做"the_narrator" 的角色，
+// 它是一个常量(不可变) 的Character结构体实例。
+// 它被存储在你的程序中作为数据，并且像指令代码一样，
+// 在程序运行时加载到RAM中。
+// 这些数据在内存中相对位置是硬编码的，地址和值都不会改变。
 
 const the_narrator = Character{
     .gold = 12,
@@ -40,145 +40,136 @@ const the_narrator = Character{
     .experience = 9000,
 };
 
-// This "global_wizard" character is very similar. The address for
-// this data won't change, but the data itself can since this is a var
-// and not a const.
+// 这个"global_wizard" 角色非常类似。这个数据的地址不会改变，
+// 但是数据本身可以改变，因为这是一个var而不是一个const。
 
 var global_wizard = Character{};
 
-// A function is instruction code at a particular address. Function
-// parameters in Zig are always immutable. They are stored in "the
-// stack". A stack is a type of data structure and "the stack" is a
-// specific bit of RAM reserved for your program. The CPU has special
-// support for adding and removing things from "the stack", so it is
-// an extremely efficient place for memory storage.
+// 一个函数是在特定地址的指令代码。
+// Zig中的函数参数总是不可变的。
+// 它们被存储在"栈"中。栈是一种数据结构，
+// 而"栈"是为你的程序保留的一块特定的RAM。
+// CPU有特殊的支持来添加和删除"栈"中的东西，
+// 所以它是一个非常高效的内存存储地方。
 //
-// Also, when a function executes, the input arguments are often
-// loaded into the beating heart of the CPU itself in registers.
+// 另外，当一个函数执行时，
+// 输入参数通常会被加载到CPU自身的寄存器中，
+// 也就是CPU的跳动心脏。
 //
-// Our main() function here has no input parameters, but it will have
-// a stack entry (called a "frame").
+// 我们这里的main()函数没有输入参数，但它会有一个栈条目(称为"帧")。
 
 pub fn main() void {
 
-    // Here, the "glorp" character will be allocated on the stack
-    // because each instance of glorp is mutable and therefore unique
-    // to the invocation of this function.
+    // 这里，"glorp"角色将被分配在栈上
+    // 因为每个glorp实例都是可变的，因此对于这个函数调用来说都是唯一的。
 
     var glorp = Character{
         .gold = 30,
     };
 
-    // The "reward_xp" value is interesting. It's an immutable
-    // value, so even though it is local, it can be put in global
-    // data and shared between all invocations. But being such a
-    // small value, it may also simply be inlined as a literal
-    // value in your instruction code where it is used.  It's up
-    // to the compiler.
+    // "reward_xp"值很有趣。它是一个不可变
+    // 的值，所以即使它是局部变量，也可以放在全局
+    // 数据中，并在所有调用之间共享。但由于它是这样一个
+    // 小值，它也可能只是作为一个字面值内联在你使用它时指令代码中。这取决于
+    // 编译器。
 
     const reward_xp: u32 = 200;
 
-    // Now let's circle back around to that "std" struct we imported
-    // at the top. Since it's just a regular Zig value once it's
-    // imported, we can also assign new names for its fields and
-    // declarations. "debug" refers to another struct and "print" is a
-    // public function namespaced within THAT struct.
+    // 现在让我们回到那个我们在顶部导入了std结构体。
+    // 因为一旦导入了它就只是一个普通Zig值，
+    // 我们也可以给它的字段和声明分配新名字。
+    // “debug”指代另一个结构体，“print”则是一个公共函数，
+    // 在该结构体内命名空间。
     //
-    // Let's assign the std.debug.print function to a const named
-    // "print" so that we can use this new name later!
+    // 让我们把std.debug.print函数赋给一个叫做“print”的常量，
+    // 这样我们就可以稍后使用这个新名字！
 
-    const print = ???;
+    const print = std.debug.print;
 
-    // Now let's look at assigning and pointing to values in Zig.
+    // 现在让我们来看看在Zig中如何赋值和指向值。
     //
-    // We'll try three different ways of making a new name to access
-    // our glorp Character and change one of its values.
+    // 我们将尝试三种不同的方式来创建一个新名字来访问
+    // 我们的glorp角色，并改变它的一个值。
     //
-    // "glorp_access1" is incorrectly named! We asked Zig to set aside
-    // memory for another Character struct. So when we assign glorp to
-    // glorp_access1 here, we're actually assigning all of the fields
-    // to make a copy! Now we have two separate characters.
+    // "glorp_access1"命名不正确！
+    // 我们要求Zig为另一个Character结构体分配内存。所以当我们把glorp赋给
+    // glorp_access1时，我们实际上是把所有的字段都赋值过去，
+    // 从而制作了一个副本！现在我们有两个不同的角色。
     //
-    // You don't need to fix this. But notice what gets printed in
-    // your program's output for this one compared to the other two
-    // assignments below!
+    // 你不需要修复这个。
+    // 但是注意一下在你程序输出中打印出来的这个和下面两个
+    // 赋值相比有什么区别！
 
     var glorp_access1: Character = glorp;
     glorp_access1.gold = 111;
     print("1:{}!. ", .{glorp.gold == glorp_access1.gold});
 
-    // NOTE:
+    // 注意：
     //
-    //     If we tried to do this with a const Character instead of a
-    //     var, changing the gold field would give us a compiler error
-    //     because const values are immutable!
+    //     如果我们试图用一个const Character而不是一个var来做这件事，
+    //     改变gold字段会给我们一个编译错误
+    //     因为const值是不可变的！
     //
-    // "glorp_access2" will do what we want. It points to the original
-    // glorp's address. Also remember that we get one implicit
-    // dereference with struct fields, so accessing the "gold" field
-    // from glorp_access2 looks just like accessing it from glorp
-    // itself.
+    // "glorp_access2"会做我们想要做的事情。它指向原始
+    // glorp的地址。还要记住，我们对结构体字段有一个隐式
+    // 解引用，所以从glorp_access2访问"gold"字段就像从glorp本身访问一样。
 
     var glorp_access2: *Character = &glorp;
     glorp_access2.gold = 222;
     print("2:{}!. ", .{glorp.gold == glorp_access2.gold});
 
-    // "glorp_access3" is interesting. It's also a pointer, but it's a
-    // const. Won't that disallow changing the gold value? No! As you
-    // may recall from our earlier pointer experiments, a constant
-    // pointer can't change what it's POINTING AT, but the value at
-    // the address it points to is still mutable! So we CAN change it.
+    // "glorp_access3"很有趣。它也是一个指针，但它是一个const。
+    // 那么这不会禁止改变gold值吗？
+    // 不会！正如你可能从我们之前的指针实验中回忆起来，
+    // 一个常量指针不能改变它所指向的东西，但是它指向地址上的值仍然是可变的！
+    // 所以我们可以改变它。
 
     const glorp_access3: *Character = &glorp;
     glorp_access3.gold = 333;
     print("3:{}!. ", .{glorp.gold == glorp_access3.gold});
 
-    // NOTE:
+    // 注意：
     //
-    //     If we tried to do this with a *const Character pointer,
-    //     that would NOT work and we would get a compiler error
-    //     because the VALUE becomes immutable!
+    //     如果我们试图用一个*const Character指针来做这件事，
+    //     那么这将不会起作用，我们会得到一个编译错误
+    //     因为值变成了不可变的！
     //
-    // Moving along...
+    // 继续前进...
     //
-    // Passing arguments to functions is pretty much exactly like
-    // making an assignment to a const (since Zig enforces that ALL
-    // function parameters are const).
+    // 向函数传递参数几乎完全就像
+    // 给一个const赋值一样(因为Zig强制所有
+    // 函数参数都是const)。
     //
-    // Knowing this, see if you can make levelUp() work as expected -
-    // it should add the specified amount to the supplied character's
-    // experience points.
+    // 知道了这一点，看看你能不能让levelUp()按预期工作 -
+    // 它应该把指定的数量加到提供的角色的
+    // 经验点上。
     //
     print("XP before:{}, ", .{glorp.experience});
 
-    // Fix 1 of 2 goes here:
-    levelUp(glorp, reward_xp);
+    // 在这里修复1/2：
+    levelUp(&glorp, reward_xp);
 
     print("after:{}.\n", .{glorp.experience});
 }
 
-// Fix 2 of 2 goes here:
-fn levelUp(character_access: Character, xp: u32) void {
+// 在这里修复2/2：
+fn levelUp(character_access: *Character, xp: u32) void {
     character_access.experience += xp;
 }
 
-// And there's more!
+// 还有更多！
 //
-// Data segments (allocated at compile time) and "the stack"
-// (allocated at run time) aren't the only places where program data
-// can be stored in memory. They're just the most efficient. Sometimes
-// we don't know how much memory our program will need until the
-// program is running. Also, there is a limit to the size of stack
-// memory allotted to programs (often set by your operating system).
-// For these occasions, we have "the heap".
+// 数据段(在编译时分配)和"栈"
+// (在运行时分配)并不是程序数据可以存储在内存中的唯一地方。
+// 它们只是最高效的。有时候我们直到程序运行时才知道我们的程序需要多少内存。
+// 而且，栈内存分配给程序的大小也有限制(通常由你的操作系统设置)。
+// 对于这些场合，我们有"堆"。
 //
-// You can use as much heap memory as you like (within physical
-// limitations, of course), but it's much less efficient to manage
-// because there is no built-in CPU support for adding and removing
-// items as we have with the stack. Also, depending on the type of
-// allocation, your program MAY have to do expensive work to manage
-// the use of heap memory. We'll learn about heap allocators later.
+// 你可以使用任意多的堆内存(当然要在物理限制范围内)，
+// 但它管理起来要低效得多，
+// 因为没有像栈那样有CPU内置支持来添加和删除项目。而且，根据分配类型，
+// 你的程序可能需要做昂贵的工作来管理堆内存的使用。我们稍后会学习关于堆分配器。
 //
-// Whew! This has been a lot of information. You'll be pleased to know
-// that the next exercise gets us back to learning Zig language
-// features we can use right away to do more things!
+// 哇！这是很多信息。你会高兴地知道
+// 下一个练习让我们回到学习Zig语言
+// 特性，我们可以立即用它们来做更多事情！

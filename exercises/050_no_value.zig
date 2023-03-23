@@ -1,84 +1,82 @@
 //
-//    "We live on a placid island of ignorance in the midst
-//     of black seas of infinity, and it was not meant that
-//     we should voyage far."
+//    “我们生活在无知的平静岛屿上，
+//     在无限的黑暗海洋中，
+//     我们不应该远航。”
 //
-//     from The Call of Cthulhu
-//       by H. P. Lovecraft
+//     选自《克苏鲁的呼唤》
+//       作者：H. P. 洛夫克拉夫特
 //
-// Zig has at least four ways of expressing "no value":
+// Zig至少有四种表示“无值”的方式：
 //
 // * undefined
 //
 //       var foo: u8 = undefined;
 //
-//       "undefined" should not be thought of as a value, but as a way
-//       of telling the compiler that you are not assigning a value
-//       _yet_. Any type may be set to undefined, but attempting
-//       to read or use that value is _always_ a mistake.
+//       “undefined”不应该被认为是一个值，而是一种告诉编译器你还没有分配一个值
+//       的方式。任何类型都可以设置为undefined，但是试图读取或使用该值总是一个错误。
 //
 // * null
 //
 //       var foo: ?u8 = null;
 //
-//       The "null" primitive value _is_ a value that means "no value".
-//       This is typically used with optional types as with the ?u8
-//       shown above. When foo equals null, that's not a value of type
-//       u8. It means there is _no value_ of type u8 in foo at all!
+//       “null”原始值_是_一个表示“无值”的值。
+//       这通常用于可选类型，如上面显示的?u8。
+//       当foo等于null时，那不是u8类型的一个值。
+//       它意味着foo根本没有u8类型的_任何值_！
 //
 // * error
 //
 //       var foo: MyError!u8 = BadError;
 //
-//       Errors are _very_ similar to nulls. They _are_ a value, but
-//       they usually indicate that the "real value" you were looking
-//       for does not exist. Instead, you have an error. The example
-//       error union type of MyError!u8 means that foo either holds
-//       a u8 value OR an error. There is _no value_ of type u8 in foo
-//       when it's set to an error!
+//       错误和null非常_相似_。
+//       它们_是_一个值，但它们通常表示你要找的“真正的值”不存在。
+//       相反，你有一个错误。
+//       上面示例中的错误联合类型MyError!u8意味着foo要么持有
+//       一个u8值，要么持有一个错误。
+//       当它设置为错误时，foo中没有u8类型的_任何值_！
 //
 // * void
 //
 //       var foo: void = {};
 //
-//       "void" is a _type_, not a value. It is the most popular of the
-//       Zero Bit Types (those types which take up absolutely no space
-//       and have only a semantic value. When compiled to executable
-//       code, zero bit types generate no code at all. The above example
-//       shows a variable foo of type void which is assigned the value
-//       of an empty expression. It's much more common to see void as
-//       the return type of a function that returns nothing.
+//       "void "是一个_类型_，而不是一个值。它是最流行的
+//       零比特类型（那些完全不占空间的类型
+//       并且只有一个语义值。当被编译为可执行
+//       时，零位类型根本不产生任何代码。上面的例子
+//       显示了一个void类型的变量foo，它被分配的值是
+//       是一个空表达式。更常见的情况是将void作为
+//       是一个不返回任何东西的函数的返回类型。
 //
-// Zig has all of these ways of expressing different types of "no value"
-// because they each serve a purpose. Briefly:
+// Zig有所有这些表达不同类型的 "无值 "的方法。
+// 因为它们都有各自的作用。简而言之：
 //
-//   * undefined - there is no value YET, this cannot be read YET
-//   * null      - there is an explicit value of "no value"
-//   * errors    - there is no value because something went wrong
-//   * void      - there will NEVER be a value stored here
+//   * undefined - 现在还没有值，这不能被读取
+//   * null      - 有一个明确的 "无价值 "的值
+//   * errors    - 没有值，因为出了问题。
+//   * void      - 这里永远不会有一个存储的值
 //
-// Please use the correct "no value" for each ??? to make this program
-// print out a cursed quote from the Necronomicon. ...If you dare.
+// 请为每个 "空 "使用正确的 "无值"，以使这个程序
+// 打印出Necronomicon中被诅咒的一句话。...如果你敢的话。
 //
 const std = @import("std");
 
 const Err = error{Cthulhu};
 
 pub fn main() void {
-    var first_line1: *const [16]u8 = ???;
+    var first_line1: *const [16]u8 = undefined;
     first_line1 = "That is not dead";
 
-    var first_line2: Err!*const [21]u8 = ???;
+    var first_line2: Err!*const [21]u8 = Err.Cthulhu;
     first_line2 = "which can eternal lie";
 
-    // Note we need the "{!s}" format for the error union string.
+    // 注意我们需要“{!s}”格式来表示错误联合字符串。
     std.debug.print("{s} {!s} / ", .{ first_line1, first_line2 });
 
     printSecondLine();
 }
 
-fn printSecondLine() ??? {
-    var second_line2: ?*const [18]u8 = ???;
+fn printSecondLine() void {
+    var second_line2: ?*const [18]u8 = null;
     second_line2 = "even death may die";
 
     std.debug.print("And with strange aeons {s}.\n", .{second_line2.?});
