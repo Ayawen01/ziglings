@@ -1,8 +1,7 @@
 //
-// With tagged unions, it gets EVEN BETTER! If you don't have a
-// need for a separate enum, you can define an inferred enum with
-// your union all in one place. Just use the 'enum' keyword in
-// place of the tag type:
+// 使用标记联合，它变得更好！如果你不需要一个单独的枚举，
+// 你可以在一个地方定义一个推断枚举和你的联合。
+// 只需要用'enum'关键字代替标签类型：
 //
 //     const Foo = union(enum) {
 //         small: u8,
@@ -10,12 +9,11 @@
 //         large: u64,
 //     };
 //
-// Let's convert Insect. Doctor Zoraptera has already deleted the
-// explicit InsectStat enum for you!
+// 让我们转换Insect。博士Zoraptera已经为你删除了显式的InsectStat枚举！
 //
 const std = @import("std");
 
-const Insect = union(InsectStat) {
+const Insect = union(enum) {
     flowers_visited: u16,
     still_alive: bool,
 };
@@ -39,16 +37,13 @@ fn printInsect(insect: Insect) void {
     }
 }
 
-// Inferred enums are neat, representing the tip of the iceberg
-// in the relationship between enums and unions. You can actually
-// coerce a union TO an enum (which gives you the active field
-// from the union as an enum). What's even wilder is that you can
-// coerce an enum to a union! But don't get too excited, that
-// only works when the union type is one of those weird zero-bit
-// types like void!
+// 推断枚举很整洁，它代表了枚举和联合之间关系的冰山一角。
+// 你实际上可以把一个联合强制转换为一个枚举（这会给你联合中的激活字段作为一个枚举）。
+// 更疯狂的是，你可以把一个枚举强制转换为一个联合！
+// 但是不要太兴奋，这只有在联合类型是那些奇怪的零位类型（zero-bit types）如void时才有效！
 //
-// Tagged unions, as with most ideas in computer science, have a
-// long history going back to the 1960s. However, they're only
-// recently becoming mainstream, particularly in system-level
-// programming languages. You might have also seen them called
-// "variants", "sum types", or even "enums"!
+// 标记联合，和计算机科学中的大多数思想一样，
+// 有着悠久的历史，可以追溯到20世纪60年代。
+// 然而，它们最近才开始成为主流，特别是在系统级编程语言中。
+// 你可能也见过它们被称为“变体（variants）”，“和类型（sum types）”，或者甚至“枚举（enums）”！
+
