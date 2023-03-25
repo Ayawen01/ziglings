@@ -1,55 +1,48 @@
 //
-// We've absorbed a lot of information about the variations of types
-// we can use in Zig. Roughly, in order we have:
+// 我们已经了解了很多关于Zig中可以使用的类型的变化。大致上，按顺序我们有：
 //
-//                          u8  single item
-//                         *u8  single-item pointer
-//                        []u8  slice (size known at runtime)
-//                       [5]u8  array of 5 u8s
-//                       [*]u8  many-item pointer (zero or more)
-//                 enum {a, b}  set of unique values a and b
-//                error {e, f}  set of unique error values e and f
-//      struct {y: u8, z: i32}  group of values y and z
-// union(enum) {a: u8, b: i32}  single value either u8 or i32
+//                          u8  单个元素
+//                         *u8  单元素指针
+//                        []u8  切片（大小在运行时确定）
+//                       [5]u8  5个u8的数组
+//                       [*]u8  多元素指针（零个或多个）
+//                 enum {a, b}  a和b的一组唯一值
+//                error {e, f}  e和f的一组唯一错误值
+//      struct {y: u8, z: i32}  y和z的一组值
+// union(enum) {a: u8, b: i32}  单个值，可以是u8或i32
 //
-// Values of any of the above types can be assigned as "var" or "const"
-// to allow or disallow changes (mutability) via the assigned name:
+// 任何上述类型的值都可以被赋值为"var"或"const"
+// 来允许或禁止通过赋值的名称修改（可变性）：
 //
-//     const a: u8 = 5; // immutable
-//       var b: u8 = 5; //   mutable
+//     const a: u8 = 5; // 不可变
+//       var b: u8 = 5; //   可变
 //
-// We can also make error unions or optional types from any of
-// the above:
+// 我们也可以从任何上述类型中制作错误联合或可选类型：
 //
-//     var a: E!u8 = 5; // can be u8 or error from set E
-//     var b: ?u8 = 5;  // can be u8 or null
+//     var a: E!u8 = 5; // 可以是u8或E集合中的错误
+//     var b: ?u8 = 5;  // 可以是u8或null
 //
-// Knowing all of this, maybe we can help out a local hermit. He made
-// a little Zig program to help him plan his trips through the woods,
-// but it has some mistakes.
+// 知道了这些，也许我们可以帮助一个当地的隐士。他写了一个小小的Zig程序来帮助他规划他穿越森林的旅行，
+// 但是它有一些错误。
 //
 // *************************************************************
-// *                A NOTE ABOUT THIS EXERCISE                 *
+// *                关于这个练习的一点说明                       *
 // *                                                           *
-// * You do NOT have to read and understand every bit of this  *
-// * program. This is a very big example. Feel free to skim    *
-// * through it and then just focus on the few parts that are  *
-// * actually broken!                                          *
+// *   你不需要阅读和理解这个程序的每一点。这是一个非常大的例子。  *
+// *   随便浏览一下，然后只关注那些真正出错的部分就好了！          *
 // *                                                           *
 // *************************************************************
 //
 const print = @import("std").debug.print;
 
-// The grue is a nod to Zork.
+// grue是对Zork的致敬。
 const TripError = error{ Unreachable, EatenByAGrue };
 
-// Let's start with the Places on the map. Each has a name and a
-// distance or difficulty of travel (as judged by the hermit).
+// 让我们从地图上的地点开始。每个地点都有一个名字和一个
+// 旅行的距离或难度（由隐士判断）。
 //
-// Note that we declare the places as mutable (var) because we need to
-// assign the paths later. And why is that? Because paths contain
-// pointers to places and assigning them now would create a dependency
-// loop!
+// 注意，我们声明地点为可变的（var），因为我们需要稍后
+// 分配路径。为什么呢？因为路径包含指向地点的指针，如果现在分配它们，就会创建一个依赖循环！
 const Place = struct {
     name: []const u8,
     paths: []const Path = undefined,
@@ -62,7 +55,7 @@ var d = Place{ .name = "Dogwood Grove" };
 var e = Place{ .name = "East Pond" };
 var f = Place{ .name = "Fox Pond" };
 
-//           The hermit's hand-drawn ASCII map
+//           隐士手绘的ASCII地图
 //  +---------------------------------------------------+
 //  |         * Archer's Point                ~~~~      |
 //  | ~~~                              ~~~~~~~~         |
@@ -85,29 +78,24 @@ var f = Place{ .name = "Fox Pond" };
 //  |                ~~~~~                              |
 //  +---------------------------------------------------+
 //
-// We'll be reserving memory in our program based on the number of
-// places on the map. Note that we do not have to specify the type of
-// this value because we don't actually use it in our program once
-// it's compiled! (Don't worry if this doesn't make sense yet.)
+// 我们将根据地图上的地点数量在我们的程序中预留内存。注意，我们不需要指定这个值的类型，因为一旦
+// 它被编译，我们就不会在我们的程序中使用它了！（如果这还不清楚，不用担心。）
 const place_count = 6;
 
-// Now let's create all of the paths between sites. A path goes from
-// one place to another and has a distance.
+// 现在让我们创建所有的路径，连接各个地点。一条路径从一个地点到另一个地点，有一个距离。
 const Path = struct {
     from: *const Place,
     to: *const Place,
     dist: u8,
 };
 
-// By the way, if the following code seems like a lot of tedious
-// manual labor, you're right! One of Zig's killer features is letting
-// us write code that runs at compile time to "automate" repetitive
-// code (much like macros in other languages), but we haven't learned
-// how to do that yet!
+// 顺便说一下，如果下面的代码看起来像是很多乏味的手工劳动，你是对的！Zig的一个杀手级特性是让
+// 我们写一些在编译时运行的代码，来“自动化”重复的代码（类似于其他语言中的宏），但是我们还没有学
+// 会如何做到这一点！
 const a_paths = [_]Path{
     Path{
         .from = &a, // from: Archer's Point
-        .to = &b,   //   to: Bridge
+        .to = &b, //   to: Bridge
         .dist = 2,
     },
 };
@@ -115,12 +103,12 @@ const a_paths = [_]Path{
 const b_paths = [_]Path{
     Path{
         .from = &b, // from: Bridge
-        .to = &a,   //   to: Archer's Point
+        .to = &a, //   to: Archer's Point
         .dist = 2,
     },
     Path{
         .from = &b, // from: Bridge
-        .to = &d,   //   to: Dogwood Grove
+        .to = &d, //   to: Dogwood Grove
         .dist = 1,
     },
 };
@@ -128,12 +116,12 @@ const b_paths = [_]Path{
 const c_paths = [_]Path{
     Path{
         .from = &c, // from: Cottage
-        .to = &d,   //   to: Dogwood Grove
+        .to = &d, //   to: Dogwood Grove
         .dist = 3,
     },
     Path{
         .from = &c, // from: Cottage
-        .to = &e,   //   to: East Pond
+        .to = &e, //   to: East Pond
         .dist = 2,
     },
 };
@@ -141,17 +129,17 @@ const c_paths = [_]Path{
 const d_paths = [_]Path{
     Path{
         .from = &d, // from: Dogwood Grove
-        .to = &b,   //   to: Bridge
+        .to = &b, //   to: Bridge
         .dist = 1,
     },
     Path{
         .from = &d, // from: Dogwood Grove
-        .to = &c,   //   to: Cottage
+        .to = &c, //   to: Cottage
         .dist = 3,
     },
     Path{
         .from = &d, // from: Dogwood Grove
-        .to = &f,   //   to: Fox Pond
+        .to = &f, //   to: Fox Pond
         .dist = 7,
     },
 };
@@ -159,51 +147,45 @@ const d_paths = [_]Path{
 const e_paths = [_]Path{
     Path{
         .from = &e, // from: East Pond
-        .to = &c,   //   to: Cottage
+        .to = &c, //   to: Cottage
         .dist = 2,
     },
     Path{
         .from = &e, // from: East Pond
-        .to = &f,   //   to: Fox Pond
-        .dist = 1,  // (one-way down a short waterfall!)
+        .to = &f, //   to: Fox Pond
+        .dist = 1, // (one-way down a short waterfall!)
     },
 };
 
 const f_paths = [_]Path{
     Path{
         .from = &f, // from: Fox Pond
-        .to = &d,   //   to: Dogwood Grove
+        .to = &d, //   to: Dogwood Grove
         .dist = 7,
     },
 };
 
-// Once we've plotted the best course through the woods, we'll make a
-// "trip" out of it. A trip is a series of Places connected by Paths.
-// We use a TripItem union to allow both Places and Paths to be in the
-// same array.
+// 一旦我们规划出穿越森林的最佳路线，我们就把它做成一个“旅行”。一个旅行是由一系列地点和路径组成的。
+// 我们使用一个TripItem联合类型来允许地点和路径在同一个数组中。
 const TripItem = union(enum) {
     place: *const Place,
     path: *const Path,
 
-    // This is a little helper function to print the two different
-    // types of item correctly.
+    // 这是一个小助手函数，用来正确地打印两种不同类型的项目。
     fn printMe(self: TripItem) void {
         switch (self) {
-            // Oops! The hermit forgot how to capture the union values
-            // in a switch statement. Please capture both values as
-            // 'p' so the print statements work!
-            .place => print("{s}", .{p.name}),
-            .path => print("--{}->", .{p.dist}),
+            // 糟糕！隐士忘了如何在switch语句中捕获联合值。
+            // 请把两个值都捕获为'p'，这样打印语句才能工作！
+            .place => |p| print("{s}", .{p.name}),
+            .path => |p| print("--{}->", .{p.dist}),
         }
     }
 };
 
-// The Hermit's Notebook is where all the magic happens. A notebook
-// entry is a Place discovered on the map along with the Path taken to
-// get there and the distance to reach it from the start point. If we
-// find a better Path to reach a Place (shorter distance), we update the
-// entry. Entries also serve as a "todo" list which is how we keep
-// track of which paths to explore next.
+// 隐士的笔记本是所有魔法发生的地方。
+// 一个笔记本条目是一个在地图上发现的地点，以及到达那里所走的路径和从起点到达那里的距离。
+// 如果我们找到了到达一个地点的更好的路径（更短的距离），我们就更新条目。
+// 条目也充当了一个“待办事项”列表，这是我们如何跟踪下一个要探索的路径。
 const NotebookEntry = struct {
     place: *const Place,
     coming_from: ?*const Place,
@@ -214,7 +196,7 @@ const NotebookEntry = struct {
 // +------------------------------------------------+
 // |              ~ Hermit's Notebook ~             |
 // +---+----------------+----------------+----------+
-// |   |      Place     |      From      | Distance |
+// |   |      地点      |      来自      |    距离   |
 // +---+----------------+----------------+----------+
 // | 0 | Archer's Point | null           |        0 |
 // | 1 | Bridge         | Archer's Point |        2 | < next_entry
@@ -224,54 +206,43 @@ const NotebookEntry = struct {
 // +---+----------------+----------------+----------+
 //
 const HermitsNotebook = struct {
-    // Remember the array repetition operator `**`? It is no mere
-    // novelty, it's also a great way to assign multiple items in an
-    // array without having to list them one by one. Here we use it to
-    // initialize an array with null values.
+    // 还记得数组重复操作符`**`吗？它不仅是一个新奇的东西，
+    // 它也是一个很好的方式来给数组中的多个元素赋值，而不用一个一个地列出来。
+    // 这里我们用它来初始化一个包含null值的数组。
     entries: [place_count]?NotebookEntry = .{null} ** place_count,
 
-    // The next entry keeps track of where we are in our "todo" list.
+    // 下一个条目跟踪我们在“待办事项”列表中的位置。
     next_entry: u8 = 0,
 
-    // Mark the start of empty space in the notebook.
+    // 标记笔记本中空白空间的开始。
     end_of_entries: u8 = 0,
 
-    // We'll often want to find an entry by Place. If one is not
-    // found, we return null.
+    // 我们经常想要通过地点来找到一个条目。如果没有找到，我们返回null。
     fn getEntry(self: *HermitsNotebook, place: *const Place) ?*NotebookEntry {
         for (&self.entries, 0..) |*entry, i| {
             if (i >= self.end_of_entries) break;
 
-            // Here's where the hermit got stuck. We need to return
-            // an optional pointer to a NotebookEntry.
+            // 这里是隐士卡住的地方。我们需要返回一个可选的指向NotebookEntry的指针。
             //
-            // What we have with "entry" is the opposite: a pointer to
-            // an optional NotebookEntry!
+            // 我们现在有的“entry”是相反的：一个指向可选NotebookEntry的指针！
             //
-            // To get one from the other, we need to dereference
-            // "entry" (with .*) and get the non-null value from the
-            // optional (with .?) and return the address of that. The
-            // if statement provides some clues about how the
-            // dereference and optional value "unwrapping" look
-            // together. Remember that you return the address with the
-            // "&" operator.
-            if (place == entry.*.?.place) return entry;
-            // Try to make your answer this long:__________;
+            // 要从一个得到另一个，我们需要解引用“entry”（用.*）并从可选值中得到非空值（用.?）并返回它的地址。
+            // if语句提供了一些线索，关于解引用和可选值“解包”是如何结合在一起的。
+            // 记住，你用“&”操作符返回地址。
+            if (place == entry.*.?.place) return &entry.*.?;
+            // 尽量让你的答案这么长：__________;
         }
         return null;
     }
 
-    // The checkNote() method is the beating heart of the magical
-    // notebook. Given a new note in the form of a NotebookEntry
-    // struct, we check to see if we already have an entry for the
-    // note's Place.
+    // checkNote()方法是神奇笔记本的跳动的心脏。
+    // 给定一个新的笔记，以NotebookEntry结构体的形式，
+    // 我们检查一下我们是否已经有了一个关于笔记地点的条目。
     //
-    // If we DON'T, we'll add the entry to the end of the notebook
-    // along with the Path taken and distance.
+    // 如果我们没有，我们就把这个条目加到笔记本的末尾，连同走过的路径和距离。
     //
-    // If we DO, we check to see if the path is "better" (shorter
-    // distance) than the one we'd noted before. If it is, we
-    // overwrite the old entry with the new one.
+    // 如果我们有，我们就检查一下这条路径是否比我们之前记录的路径“更好”（更短的距离）。
+    // 如果是，我们就用新的条目覆盖旧的条目。
     fn checkNote(self: *HermitsNotebook, note: NotebookEntry) void {
         var existing_entry = self.getEntry(note.place);
 
@@ -283,67 +254,55 @@ const HermitsNotebook = struct {
         }
     }
 
-    // The next two methods allow us to use the notebook as a "todo"
-    // list.
+    // 接下来的两个方法允许我们把笔记本当作一个“待办事项”列表。
     fn hasNextEntry(self: *HermitsNotebook) bool {
         return self.next_entry < self.end_of_entries;
     }
 
     fn getNextEntry(self: *HermitsNotebook) *const NotebookEntry {
-        defer self.next_entry += 1; // Increment after getting entry
+        defer self.next_entry += 1; // 获取条目后递增
         return &self.entries[self.next_entry].?;
     }
 
-    // After we've completed our search of the map, we'll have
-    // computed the shortest Path to every Place. To collect the
-    // complete trip from the start to the destination, we need to
-    // walk backwards from the destination's notebook entry, following
-    // the coming_from pointers back to the start. What we end up with
-    // is an array of TripItems with our trip in reverse order.
+    // 在我们完成了对地图的搜索后，我们就计算出了到每个地点的最短路径。
+    // 要收集从起点到目的地的完整旅行，
+    // 我们需要从目的地的笔记本条目开始，沿着coming_from指针回溯到起点。
+    // 我们最终得到的是一个TripItem数组，里面是我们倒序排列的旅行。
     //
-    // We need to take the trip array as a parameter because we want
-    // the main() function to "own" the array memory. What do you
-    // suppose could happen if we allocated the array in this
-    // function's stack frame (the space allocated for a function's
-    // "local" data) and returned a pointer or slice to it?
+    // 我们需要把旅行数组作为一个参数，因为我们想让main()函数“拥有”数组内存。
+    // 你觉得如果我们在这个函数的栈帧（为函数的“局部”数据分配的空间）中分配数组，
+    // 并返回一个指针或切片会发生什么？
     //
-    // Looks like the hermit forgot something in the return value of
-    // this function. What could that be?
-    fn getTripTo(self: *HermitsNotebook, trip: []?TripItem, dest: *Place) void {
-        // We start at the destination entry.
+    // 看起来隐士在这个函数的返回值中忘了一些东西。那会是什么呢？
+    fn getTripTo(self: *HermitsNotebook, trip: []?TripItem, dest: *Place) TripError!void {
+        // 我们从目的地条目开始。
         const destination_entry = self.getEntry(dest);
 
-        // This function needs to return an error if the requested
-        // destination was never reached. (This can't actually happen
-        // in our map since every Place is reachable by every other
-        // Place.)
+        // 这个函数需要在请求的目的地没有到达时返回一个错误。
+        // （这实际上不会发生在我们的地图上，因为每个地点都可以被每个其他地点到达。）
         if (destination_entry == null) {
             return TripError.Unreachable;
         }
 
-        // Variables hold the entry we're currently examining and an
-        // index to keep track of where we're appending trip items.
+        // 变量保存了我们当前正在检查的条目和一个索引来跟踪我们在哪里追加旅行项目。
         var current_entry = destination_entry.?;
         var i: u8 = 0;
 
-        // At the end of each looping, a continue expression increments
-        // our index. Can you see why we need to increment by two?
+        // 在每次循环的结束，一个continue表达式递增我们的索引。你能看出为什么我们需要每次递增两个吗？
         while (true) : (i += 2) {
             trip[i] = TripItem{ .place = current_entry.place };
 
-            // An entry "coming from" nowhere means we've reached the
-            // start, so we're done.
+            // 一个“来自”无处的条目意味着我们已经到达了
+            // 起点，所以我们完成了。
             if (current_entry.coming_from == null) break;
 
-            // Otherwise, entries have a path.
+            // 否则，条目有一条路径。
             trip[i + 1] = TripItem{ .path = current_entry.via_path.? };
 
-            // Now we follow the entry we're "coming from".  If we
-            // aren't able to find the entry we're "coming from" by
-            // Place, something has gone horribly wrong with our
-            // program! (This really shouldn't ever happen. Have you
-            // checked for grues?)
-            // Note: you do not need to fix anything here.
+            // 现在我们跟随我们“来自”的条目。如果我们
+            // 没有能够通过地点找到我们“来自”的条目，那么我们的
+            // 程序就出了大问题！（这真的不应该发生。你检查过grues了吗？）
+            // 注意：你不需要在这里修复任何东西。
             const previous_entry = self.getEntry(current_entry.coming_from.?);
             if (previous_entry == null) return TripError.EatenByAGrue;
             current_entry = previous_entry.?;
@@ -352,16 +311,12 @@ const HermitsNotebook = struct {
 };
 
 pub fn main() void {
-    // Here's where the hermit decides where he would like to go. Once
-    // you get the program working, try some different Places on the
-    // map!
-    const start = &a;        // Archer's Point
-    const destination = &f;  // Fox Pond
+    // 这里是隐士决定他想去哪里的地方。一旦你让程序运行起来，试试地图上的不同地点！
+    const start = &a; // Archer's Point
+    const destination = &f; // Fox Pond
 
-    // Store each Path array as a slice in each Place. As mentioned
-    // above, we needed to delay making these references to avoid
-    // creating a dependency loop when the compiler is trying to
-    // figure out how to allocate space for each item.
+    // 把每个路径数组作为一个切片存储在每个地点中。
+    // 如上所述，我们需要延迟建立这些引用，以避免在编译器试图
     a.paths = a_paths[0..];
     b.paths = b_paths[0..];
     c.paths = c_paths[0..];
@@ -369,10 +324,9 @@ pub fn main() void {
     e.paths = e_paths[0..];
     f.paths = f_paths[0..];
 
-    // Now we create an instance of the notebook and add the first
-    // "start" entry. Note the null values. Read the comments for the
-    // checkNote() method above to see how this entry gets added to
-    // the notebook.
+    // 确定如何为每个项目分配空间时创建一个依赖循环。
+    // 现在我们创建一个笔记本的实例，并添加第一个“开始”条目。注意null值。
+    // 阅读上面checkNote()方法的注释，看看这个条目是如何被添加到笔记本中的。
     var notebook = HermitsNotebook{};
     var working_note = NotebookEntry{
         .place = start,
@@ -382,17 +336,14 @@ pub fn main() void {
     };
     notebook.checkNote(working_note);
 
-    // Get the next entry from the notebook (the first being the
-    // "start" entry we just added) until we run out, at which point
-    // we'll have checked every reachable Place.
+    // 从笔记本中获取下一个条目（第一个是我们刚刚添加的“开始”条目），
+    // 直到我们用完为止，这时我们就检查了每个可到达的地点。
     while (notebook.hasNextEntry()) {
         var place_entry = notebook.getNextEntry();
 
-        // For every Path that leads FROM the current Place, create a
-        // new note (in the form of a NotebookEntry) with the
-        // destination Place and the total distance from the start to
-        // reach that place. Again, read the comments for the
-        // checkNote() method to see how this works.
+        // 对于每一条从当前地点出发的路径，创建一个新的笔记（以NotebookEntry结构体的形式），
+        // 包含目的地和从起点到达那里的总距离。
+        // 再次阅读checkNote()方法的注释，看看这是如何工作的。
         for (place_entry.place.paths) |*path| {
             working_note = NotebookEntry{
                 .place = path.to,
@@ -404,11 +355,9 @@ pub fn main() void {
         }
     }
 
-    // Once the loop above is complete, we've calculated the shortest
-    // path to every reachable Place! What we need to do now is set
-    // aside memory for the trip and have the hermit's notebook fill
-    // in the trip from the destination back to the path. Note that
-    // this is the first time we've actually used the destination!
+    // 一旦上面的循环完成，我们就计算出了到每个可到达的地方的最短
+    // 路径！我们现在需要做的是为旅行分配内存，并让隐士的笔记本从
+    // 目的地回到路径上填写旅行。注意，这是我们第一次真正使用目的地！
     var trip = [_]?TripItem{null} ** (place_count * 2);
 
     notebook.getTripTo(trip[0..], destination) catch |err| {
@@ -416,19 +365,17 @@ pub fn main() void {
         return;
     };
 
-    // Print the trip with a little helper function below.
+    // 用下面的一个小助手函数打印旅行。
     printTrip(trip[0..]);
 }
 
-// Remember that trips will be a series of alternating TripItems
-// containing a Place or Path from the destination back to the start.
-// The remaining space in the trip array will contain null values, so
-// we need to loop through the items in reverse, skipping nulls, until
-// we reach the destination at the front of the array.
+// 记住，旅行将是一系列交替的TripItems
+// 包含从目的地回到起点的一个地方或路径。
+// 旅行数组中剩余的空间将包含空值，所以
+// 我们需要反向遍历数组中的项目，跳过空值，直到我们到达数组前面的目的地。
 fn printTrip(trip: []?TripItem) void {
-    // We convert the usize length to a u8 with @intCast(), a
-    // builtin function just like @import().  We'll learn about
-    // these properly in a later exercise.
+    // 我们用@intCast()把usize长度转换成u8，这是一个内置函数，就像@import()一样。
+    // 我们会在后面的练习中正确地学习这些。
     var i: u8 = @intCast(u8, trip.len);
 
     while (i > 0) {
@@ -440,32 +387,22 @@ fn printTrip(trip: []?TripItem) void {
     print("\n", .{});
 }
 
-// Going deeper:
+// 深入探讨：
 //
-// In computer science terms, our map places are "nodes" or "vertices" and
-// the paths are "edges". Together, they form a "weighted, directed
-// graph". It is "weighted" because each path has a distance (also
-// known as a "cost"). It is "directed" because each path goes FROM
-// one place TO another place (undirected graphs allow you to travel
-// on an edge in either direction).
+// 用计算机科学的术语来说，我们的地图地点是“节点”或“顶点”，而路径是“边”。
+// 它们一起形成了一个“带权重的有向图”。
+// 它是“带权重的”，因为每条路径都有一个距离（也称为“代价”）。
+// 它是“有向的”，因为每条路径都是从一个地方到另一个地方（无向图允许你在一条边上任意方向行走）。
 //
-// Since we append new notebook entries at the end of the list and
-// then explore each sequentially from the beginning (like a "todo"
-// list), we are treating the notebook as a "First In, First Out"
-// (FIFO) queue.
+// 由于我们在列表的末尾添加新的笔记本条目，然后从开头依次探索每个条目（就像一个“待办事项”列表），
+// 我们把笔记本当作一个“先进先出”（FIFO）队列。
 //
-// Since we examine all closest paths first before trying further ones
-// (thanks to the "todo" queue), we are performing a "Breadth-First
-// Search" (BFS).
+// 由于我们先检查所有最近的路径，再尝试更远的路径（多亏了“待办事项”队列），
+// 我们正在执行一个“广度优先搜索”（BFS）。
 //
-// By tracking "lowest cost" paths, we can also say that we're
-// performing a "least-cost search".
+// 通过跟踪“最低代价”路径，我们也可以说我们正在执行一个“最小代价搜索”。
 //
-// Even more specifically, the Hermit's Notebook most closely
-// resembles the Shortest Path Faster Algorithm (SPFA), attributed to
-// Edward F. Moore. By replacing our simple FIFO queue with a
-// "priority queue", we would basically have Dijkstra's algorithm. A
-// priority queue retrieves items sorted by "weight" (in our case, it
-// would keep the paths with the shortest distance at the front of the
-// queue). Dijkstra's algorithm is more efficient because longer paths
-// can be eliminated more quickly. (Work it out on paper to see why!)
+// 更具体地说，隐士的笔记本最接近于最短路径快速算法（SPFA），归功于Edward F. Moore。
+// 通过用一个“优先队列”替换我们简单的FIFO队列，我们基本上就有了Dijkstra算法。
+// 一个优先队列按照“权重”排序检索项目（在我们的情况下，它会把距离最短的路径放在队列的前面）。
+// Dijkstra算法更有效率，因为更长的路径可以更快地被淘汰。（用纸笔演算一下就知道为什么了！）
