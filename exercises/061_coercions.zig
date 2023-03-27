@@ -1,78 +1,70 @@
 //
-// It'll only take us a moment to learn the Zig type coercion
-// rules because they're quite logical.
+// 我们只需要花一点时间就可以学习zig的类型强制转换规则，因为它们非常合乎逻辑。
 //
-// 1. Types can always be made _more_ restrictive.
+// 1. 类型总是可以变得更加严格。
 //
 //    var foo: u8 = 5;
 //    var p1: *u8 = &foo;
-//    var p2: *const u8 = p1; // mutable to immutable
+//    var p2: *const u8 = p1; // 可变到不可变
 //
-// 2. Numeric types can coerce to _larger_ types.
+// 2. 数值类型可以强制转换为更大的类型。
 //
 //    var n1: u8 = 5;
-//    var n2: u16 = n1; // integer "widening"
+//    var n2: u16 = n1; // 整数“扩展”
 //
 //    var n3: f16 = 42.0;
-//    var n4: f32 = n3; // float "widening"
+//    var n4: f32 = n3; // 浮点数“扩展”
 //
-// 3. Single-item pointers to arrays coerce to slices and
-//    many-item pointers.
+// 3. 指向数组的单项指针可以强制转换为切片和多项指针。
 //
 //    const arr: [3]u8 = [3]u8{5, 6, 7};
-//    const s: []const u8 = &arr;  // to slice
-//    const p: [*]const u8 = &arr; // to many-item pointer
+//    const s: []const u8 = &arr;  // 到切片
+//    const p: [*]const u8 = &arr; // 到多项指针
 //
-// 4. Single-item mutable pointers can coerce to single-item
-//    pointers pointing to an array of length 1. (Interesting!)
+// 4. 单项可变指针可以强制转换为指向长度为1的数组的单项指针。（有趣！）
 //
 //    var five: u8 = 5;
 //    var a_five: *[1]u8 = &five;
 //
-// 5. Payload types and null coerce to optionals.
+// 5. 载荷类型和null可以强制转换为可选类型。
 //
 //    var num: u8 = 5;
-//    var maybe_num: ?u8 = num; // payload type
+//    var maybe_num: ?u8 = num; // 载荷类型
 //    maybe_num = null;         // null
 //
-// 6. Payload types and errors coerce to error unions.
+// 6. 载荷类型和错误可以强制转换为错误联合类型。
 //
 //    const MyError = error{Argh};
 //    var char: u8 = 'x';
-//    var char_or_die: MyError!u8 = char; // payload type
-//    char_or_die = MyError.Argh;         // error
+//    var char_or_die: MyError!u8 = char; // 载荷类型
+//    char_or_die = MyError.Argh;         // 错误
 //
-// 7. 'undefined' coerces to any type (or it wouldn't work!)
+// 7. 'undefined'可以强制转换为任何类型（否则它就不会起作用！）
 //
-// 8. Compile-time numbers coerce to compatible types.
+// 8. 编译时数字可以强制转换为兼容的类型。
 //
-//    Just about every single exercise program has had an example
-//    of this, but a full and proper explanation is coming your
-//    way soon in the third-eye-opening subject of comptime.
+//    几乎每一个练习程序都有这个例子，
+//    但是一个完整而恰当的解释即将在第三眼开启的主题——编译时——向你展示。
 //
-// 9. Tagged unions coerce to the current tagged enum.
+// 9. 标记联合可以强制转换为当前标记枚举。
 //
-// 10. Enums coerce to a tagged union when that tagged field is a
-//     zero-length type that has only one value (like void).
+// 10. 枚举可以强制转换为标记联合，当那个标记字段是一个零长度类型，而且只有一个值（比如void）时。
 //
-// 11. Zero-bit types (like void) can be coerced into single-item
-//     pointers.
+// 11. 零位类型（比如void）可以强制转换为单项指针。
 //
-// The last three are fairly esoteric, but you're more than
-// welcome to read more about them in the official Zig language
-// documentation and write your own experiments.
+// 最后三个相当深奥，但是你非常欢迎在官方齐格语言文档中阅读更多关于它们的内容，并写你自己的实验。
 
 const print = @import("std").debug.print;
 
 pub fn main() void {
     var letter: u8 = 'A';
 
-    const my_letter:   ???   = &letter;
+    const my_letter: ?*[1]u8 = &letter;
     //               ^^^^^^^
-    //           Your type here.
-    // Must coerce from &letter (which is a *u8).
-    // Hint: Use coercion Rules 4 and 5.
+    //           你的类型在这里。
+    // 必须从&letter（它是一个*u8）强制转换。
+    // 提示：使用强制转换规则4和5。
 
-    // When it's right, this will work:
+    // 当它正确时，这将起作用：
     print("Letter: {u}\n", .{my_letter.?.*[0]});
 }

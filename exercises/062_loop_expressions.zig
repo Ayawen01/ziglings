@@ -1,35 +1,35 @@
 //
-// Remember using if/else statements as expressions like this?
+// 还记得像这样使用if/else语句作为表达方式吗？
 //
 //     var foo: u8 = if (true) 5 else 0;
 //
-// Zig also lets you use for and while loops as expressions.
+// Zig还允许你将for和while循环作为表达式使用。
 //
-// Like 'return' for functions, you can return a value from a
-// loop block with break:
+// 像函数的 "return "一样，你可以从一个
+// 循环块中返回一个值，并使用break：
 //
-//     break true; // return boolean value from block
+//     break true; // 从块返回布尔值
 //
-// But what value is returned from a loop if a break statement is
-// never reached? We need a default expression. Thankfully, Zig
-// loops also have 'else' clauses! As you might have guessed, the
-// 'else' clause is evaluated when: 1) a 'while' condition becomes
-// false or 2) a 'for' loop runs out of items.
+// 但是，如果break语句没有到达，从循环中返回的是什么值呢？
+// 从未到达？我们需要一个默认的表达式。幸好，Zig
+// 循环也有 "else "子句! 正如你可能已经猜到的，'else'子句在以下情况下被评估
+// 'else'子句会在以下情况下被评估： 1) 一个'while'条件变成
+// 为假，或者2）'for'循环中的项目用完。
 //
 //     const two: u8 = while (true) break 2 else 0;         // 2
 //     const three: u8 = for ([1]u8{1}) |f| break 3 else 0; // 3
 //
-// If you do not provide an else clause, an empty one will be
-// provided for you, which will evaluate to the void type, which
-// is probably not what you want. So consider the else clause
-// essential when using loops as expressions.
+// 如果你没有提供一个else子句，一个空的else子句将被提供给你。
+// 它将评估为void类型，这可能不是你想要的。
+// 可能不是你想要的。所以请考虑else子句
+// 在使用循环作为表达式时，是必不可少的。
 //
 //     const four: u8 = while (true) {
 //         break 4;
-//     };               // <-- ERROR! Implicit 'else void' here!
+//     };               // <-- 错误! 这里隐含了'else void'!
 //
-// With that in mind, see if you can fix the problem with this
-// program.
+// 考虑到这一点，看看你能不能用这个程序解决这个问题程序。
+// 程序。
 //
 const print = @import("std").debug.print;
 
@@ -43,11 +43,11 @@ pub fn main() void {
         "Prolog",
     };
 
-    // Let's find the first language with a three-letter name and
-    // return it from the for loop.
+    // 让我们找到第一个有三个字母名字的语言，并从for循环中返回。
+    // 从for循环中返回。
     const current_lang: ?[]const u8 = for (langs) |lang| {
         if (lang.len == 3) break lang;
-    };
+    } else null;
 
     if (current_lang) |cl| {
         print("Current language: {s}\n", .{cl});
