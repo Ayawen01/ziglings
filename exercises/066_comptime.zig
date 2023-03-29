@@ -1,80 +1,53 @@
 //
-// "Compile time" is a program's environment while it is being
-// compiled. In contrast, "run time" is the environment while the
-// compiled program is executing (traditionally as machine code
-// on a hardware CPU).
+// "Compile time" 是程序在编译时的环境，
+// 而 "run time" 是指编译后的程序在执行时的环境（传统上是作为机器代码在硬件CPU上执行）。
 //
-// Errors make an easy example:
+// 错误可以很好地说明这个问题：
 //
-// 1. Compile-time error: caught by the compiler, usually
-//    resulting in a message to the programmer.
+// 1. 编译时错误：由编译器捕获，通常会导致向程序员发送消息。
 //
-// 2. Runtime error: either caught by the running program itself
-//    or by the host hardware or operating system. Could be
-//    gracefully caught and handled or could cause the computer
-//    to crash (or halt and catch fire)!
+// 2. 运行时错误：由运行中的程序本身或主机硬件或操作系统捕获。
+// 可以优雅地捕获和处理，也可能导致计算机崩溃（或停止并着火）！
 //
-// All compiled languages must perform a certain amount of logic
-// at compile time in order to analyze the code, maintain a table
-// of symbols (such as variable and function names), etc.
+// 所有编译语言都必须在编译时执行一定量的逻辑，以分析代码，维护符号表（例如变量和函数名称）等。
 //
-// Optimizing compilers can also figure out how much of a program
-// can be pre-computed or "inlined" at compile time to make the
-// resulting program more efficient. Smart compilers can even
-// "unroll" loops, turning their logic into a fast linear
-// sequence of statements (at the usually very slight expense of
-// the increased size of the repeated code).
+// 优化编译器还可以计算出多少程序可以在编译时进行预计算或“内联”，以使结果程序更加高效。
+// 智能编译器甚至可以“展开”循环，将它们的逻辑转换为快速的线性语句序列（通常会稍微增加重复代码的大小）。
 //
-// Zig takes these concepts further by making these optimizations
-// an integral part of the language itself!
+// Zig通过使这些优化成为语言本身的一个组成部分来进一步发展了这些概念！
 //
 const print = @import("std").debug.print;
 
 pub fn main() void {
-    // ALL numeric literals in Zig are of type comptime_int or
-    // comptime_float. They are of arbitrary size (as big or
-    // little as you need).
+    // 所有数字文字都是类型为comptime_int或comptime_float的Zig中的类型。它们具有任意大小（尽可能大或小）。
     //
-    // Notice how we don't have to specify a size like "u8",
-    // "i32", or "f64" when we assign identifiers immutably with
-    // "const".
+    // 注意，当我们使用“const”不可变地分配标识符时，我们不必指定像“u8”、“i32”或“f64”这样的大小。
     //
-    // When we use these identifiers in our program, the VALUES
-    // are inserted at compile time into the executable code. The
-    // IDENTIFIERS "const_int" and "const_float" don't exist in
-    // our compiled application!
+    // 当我们在程序中使用这些标识符时，值会在编译时插入到可执行代码中。
+    // 标识符“const_int”和“const_float”不存在于我们编译后的应用程序中！
     const const_int = 12345;
     const const_float = 987.654;
 
     print("Immutable: {}, {d:.3}; ", .{ const_int, const_float });
 
-    // But something changes when we assign the exact same values
-    // to identifiers mutably with "var".
+    // 但是当我们使用“var”可变地将完全相同的值分配给标识符时，情况会发生变化。
     //
-    // The literals are STILL comptime_int and comptime_float,
-    // but we wish to assign them to identifiers which are
-    // mutable at runtime.
+    // 文字仍然是comptime_int和comptime_float，但我们希望将它们分配给在运行时可变的标识符。
     //
-    // To be mutable at runtime, these identifiers must refer to
-    // areas of memory. In order to refer to areas of memory, Zig
-    // must know exactly how much memory to reserve for these
-    // values. Therefore, it follows that we just specify numeric
-    // types with specific sizes. The comptime numbers will be
-    // coerced (if they'll fit!) into your chosen runtime types.
-    // For this it is necessary to specify a size, e.g. 32 bit.
-    var var_int = 12345;
-    var var_float = 987.654;
+    // 要在运行时可变，这些标识符必须引用内存区域。
+    // 为了引用内存区域，Zig必须确切地知道为这些值保留多少内存。
+    // 因此，我们只需指定具有特定大小的数字类型。
+    // 如果它们适合，comptime数字将被强制转换为您选择的运行时类型。为此需要指定大小，例如32位。
+    var var_int: u32 = 12345;
+    var var_float: f32 = 987.654;
 
-    // We can change what is stored at the areas set aside for
-    // "var_int" and "var_float" in the running compiled program.
+    // 我们可以更改在运行编译后的程序中为“var_int”和“var_float”设置的区域中存储的内容。
     var_int = 54321;
     var_float = 456.789;
 
     print("Mutable: {}, {d:.3}; ", .{ var_int, var_float });
 
-    // Bonus: Now that we're familiar with Zig's builtins, we can
-    // also inspect the types to see what they are, no guessing
-    // needed!
+    // 奖励：现在我们熟悉了Zig的内置函数，我们还可以检查类型以查看它们是什么，无需猜测！
     print("Types: {}, {}, {}, {}\n", .{
         @TypeOf(const_int),
         @TypeOf(const_float),
