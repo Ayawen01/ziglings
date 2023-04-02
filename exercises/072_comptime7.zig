@@ -1,8 +1,7 @@
 //
-// There is also an 'inline while'. Just like 'inline for', it
-// loops at compile time, allowing you do all sorts of
-// interesting things not possible at runtime. See if you can
-// figure out what this rather bonkers example prints:
+// 还有一种“inline while”。就像“inline for”一样，
+// 它可以在编译时循环，允许您进行各种在运行时不可能实现的有趣的事情。
+// 看看您是否可以弄清楚这个相当疯狂的示例打印了什么：
 //
 //     const foo = [3]*const [5]u8{ "~{s}~", "<{s}>", "d{s}b" };
 //     comptime var i = 0;
@@ -11,55 +10,43 @@
 //         print(foo[i] ++ "\n", .{foo[i]});
 //     }
 //
-// You haven't taken off that wizard hat yet, have you?
+// 你还没有摘下那顶巫帽，是吗？
 //
 const print = @import("std").debug.print;
 
 pub fn main() void {
-    // Here is a string containing a series of arithmetic
-    // operations and single-digit decimal values. Let's call
-    // each operation and digit pair an "instruction".
+    // 这里有一个包含一系列算术运算和一位数字的字符串。我们称每个操作和数字对为“指令”。
     const instructions = "+3 *5 -2 *2";
 
-    // Here is a u32 variable that will keep track of our current
-    // value in the program at runtime. It starts at 0, and we
-    // will get the final value by performing the sequence of
-    // instructions above.
+    // 这里有一个u32变量，它将在运行时跟踪程序中的当前值。它从0开始，我们将通过执行上面的指令序列来获得最终值。
     var value: u32 = 0;
 
-    // This "index" variable will only be used at compile time in
-    // our loop.
+    // 这个“索引”变量只会在我们的循环中编译时使用。
     comptime var i = 0;
 
-    // Here we wish to loop over each "instruction" in the string
-    // at compile time.
+    // 在这里，我们希望在编译时循环遍历字符串中的每个“指令”。
     //
-    // Please fix this to loop once per "instruction":
-    ??? (i < instructions.len) : (???) {
+    // 请修复此代码，使其每次循环一次“指令”：
+    inline while (i < instructions.len) : (i += 3) {
 
-        // This gets the digit from the "instruction". Can you
-        // figure out why we subtract '0' from it?
+        // 这从“instruction”中获取数字。你能想出为什么我们要从中减去'0'吗？
         comptime var digit = instructions[i + 1] - '0';
 
-        // This 'switch' statement contains the actual work done
-        // at runtime. At first, this doesn't seem exciting...
+        // 这个“switch”语句包含了实际运行时执行的工作。起初，这似乎并不令人兴奋...
         switch (instructions[i]) {
             '+' => value += digit,
             '-' => value -= digit,
             '*' => value *= digit,
             else => unreachable,
         }
-        // ...But it's quite a bit more exciting than it first appears.
-        // The 'inline while' no longer exists at runtime and neither
-        // does anything else not touched directly by runtime
-        // code. The 'instructions' string, for example, does not
-        // appear anywhere in the compiled program because it's
-        // not used by it!
+        // ...但它比起一开始看起来要有趣得多。
+        // “inline while”在运行时不再存在，也没有任何其他
+        // 没有被运行时代码直接触及的东西。例如，“instructions”字符串
+        // 在编译后的程序中不会出现，因为它没有被使用！
         //
-        // So in a very real sense, this loop actually converts
-        // the instructions contained in a string into runtime
-        // code at compile time. Guess we're compiler writers
-        // now. See? The wizard hat was justified after all.
+        // 因此，在非常真实的意义上，这个循环实际上将
+        // 字符串中包含的指令转换为运行时代码。猜猜我们是编译器作者
+        // 现在。看到了吗？巫师帽是有道理的。
     }
 
     print("{}\n", .{value});
