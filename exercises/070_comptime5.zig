@@ -1,23 +1,20 @@
 //
-// Being able to pass types to functions at compile time lets us
-// generate code that works with multiple types. But it doesn't
-// help us pass VALUES of different types to a function.
+// 能够在编译时将类型传递给函数，使我们能够生成适用于多种类型的代码。
+// 但是，它并不能帮助我们将不同类型的值传递给函数。
 //
-// For that, we have the 'anytype' placeholder, which tells Zig
-// to infer the actual type of a parameter at compile time.
+// 为此，我们有“anytype”占位符，它告诉Zig在编译时推断参数的实际类型。
 //
 //     fn foo(thing: anytype) void { ... }
 //
-// Then we can use builtins such as @TypeOf(), @typeInfo(),
-// @typeName(), @hasDecl(), and @hasField() to determine more
-// about the type that has been passed in. All of this logic will
-// be performed entirely at compile time.
+// 然后，我们可以使用内置函数，
+// 例如@TypeOf()、@typeInfo()、@typeName()、@hasDecl()和@hasField()
+// 来确定更多关于已传递的类型的信息。
+// 所有这些逻辑都将完全在编译时执行。
 //
 const print = @import("std").debug.print;
 
-// Let's define three structs: Duck, RubberDuck, and Duct. Notice
-// that Duck and RubberDuck both contain waddle() and quack()
-// methods declared in their namespace (also known as "decls").
+// 让我们定义三个结构体：Duck、RubberDuck和Duct。
+// 请注意，Duck和RubberDuck都包含在其命名空间（也称为“decls”）中声明的waddle()和quack()方法。
 
 const Duck = struct {
     eggs: u8,
@@ -50,15 +47,14 @@ const RubberDuck = struct {
     }
 
     fn quack(self: RubberDuck) void {
-        // Assigning an expression to '_' allows us to safely
-        // "use" the value while also ignoring it.
+        // 把一个表达式赋值给'_'可以让我们安全地“使用”这个值，同时也忽略它。
         _ = self;
         print("\"Squeek!\" ", .{});
     }
 
     fn listen(self: RubberDuck, dev_talk: []const u8) void {
-        // Listen to developer talk about programming problem.
-        // Silently contemplate problem. Emit helpful sound.
+        // 听开发人员谈论编程问题。
+        // 沉默地思考问题。发出有帮助的声音。
         _ = dev_talk;
         self.quack();
     }
@@ -82,19 +78,19 @@ const Duct = struct {
 const DuctError = error{UnmatchedDiameters};
 
 pub fn main() void {
-    // This is a real duck!
+    // 这是一只真鸭子！
     const ducky1 = Duck{
         .eggs = 0,
         .loudness = 3,
     };
 
-    // This is not a real duck, but it has quack() and waddle()
-    // abilities, so it's still a "duck".
+    // 这不是一只真鸭子，但它有quack()和waddle()能力，
+    // 所以它仍然是一只“鸭子”。
     const ducky2 = RubberDuck{
         .in_bath = false,
     };
 
-    // This is not even remotely a duck.
+    // 这甚至不像鸭子。
     const ducky3 = Duct{
         .diameter = 17,
         .length = 165,
@@ -106,38 +102,34 @@ pub fn main() void {
     print("ducky3: {}\n", .{isADuck(ducky3)});
 }
 
-// This function has a single parameter which is inferred at
-// compile time. It uses builtins @TypeOf() and @hasDecl() to
-// perform duck typing ("if it walks like a duck and it quacks
-// like a duck, then it must be a duck") to determine if the type
-// is a "duck".
+// 这个函数有一个在编译时推断的单一参数。
+// 它使用内置的@TypeOf()和@hasDecl()来执行鸭子类型
+// （“如果它像鸭子一样走路，像鸭子一样嘎嘎叫，
+// 那么它一定是一只鸭子”）来确定类型是否为“鸭子”。
 fn isADuck(possible_duck: anytype) bool {
-    // We'll use @hasDecl() to determine if the type has
-    // everything needed to be a "duck".
+    // 我们将使用@hasDecl()来确定类型是否具有
+    // 成为“鸭子”的一切所需。
     //
-    // In this example, 'has_increment' will be true if type Foo
-    // has an increment() method:
+    // 在此示例中，如果类型Foo具有increment()方法，
+    // 则'has_increment'将为true：
     //
     //     const has_increment = @hasDecl(Foo, "increment");
     //
-    // Please make sure MyType has both waddle() and quack()
-    // methods:
+    // 请确保MyType具有waddle()和quack()方法：
     const MyType = @TypeOf(possible_duck);
-    const walks_like_duck = ???;
-    const quacks_like_duck = ???;
+    const walks_like_duck = @hasDecl(MyType, "waddle");
+    const quacks_like_duck = @hasDecl(MyType, "quack");
 
     const is_duck = walks_like_duck and quacks_like_duck;
 
     if (is_duck) {
-        // We also call the quack() method here to prove that Zig
-        // allows us to perform duck actions on anything
-        // sufficiently duck-like.
+        // 我们还在这里调用quack()方法来证明Zig
+        // 允许我们对任何足够像鸭子的东西执行鸭子动作。
         //
-        // Because all of the checking and inference is performed
-        // at compile time, we still have complete type safety:
-        // attempting to call the quack() method on a struct that
-        // doesn't have it (like Duct) would result in a compile
-        // error, not a runtime panic or crash!
+        // 因为所有检查和推断都是在编译时执行的，
+        // 所以我们仍然具有完整的类型安全性：
+        // 尝试在没有它的结构上调用quack()方法
+        // （如Duct）将导致编译错误，而不是运行时恐慌或崩溃！
         possible_duck.quack();
     }
 
