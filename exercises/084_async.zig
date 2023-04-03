@@ -21,7 +21,7 @@
 //
 //     var foo_frame = async fooThatSuspends();
 //
-// 5. 如果您在不使用“async”关键字的情况下调用异步函数，则调用异步函数的函数本身变为异步！ 
+// 5. 如果您在不使用“async”关键字的情况下调用异步函数，则调用异步函数的函数本身变为异步！
 // 在此示例中，bar（）函数现在是异步的，因为它调用了异步的fooThatSuspends（）。
 //
 //     fn bar() void {

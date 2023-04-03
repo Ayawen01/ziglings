@@ -53,7 +53,7 @@ pub fn main() !void {
     const allocator = arena.allocator();
 
     // 为此数组分配内存
-    var avg: []f64 = ???;
+    var avg: []f64 = try allocator.alloc(f64, arr.len);
 
     runningAverage(arr, avg);
     std.debug.print("Running Average: ", .{});

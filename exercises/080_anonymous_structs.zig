@@ -42,13 +42,13 @@ pub fn main() void {
     // * circle1 应该容纳 i32 整数
     // * circle2 应该容纳 f32 浮点数
     //
-    var circle1 = ??? {
+    var circle1 = Circle(i32){
         .center_x = 25,
         .center_y = 70,
         .radius = 15,
     };
 
-    var circle2 = ??? {
+    var circle2 = Circle(f32){
         .center_x = 25.234,
         .center_y = 70.999,
         .radius = 15.714,

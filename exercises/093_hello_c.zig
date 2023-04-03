@@ -42,7 +42,7 @@ pub fn main() void {
     //
     // 在这个练习中，我们使用'write'输出17个字符，
     // 但仍然缺少一些东西...
-    const c_res = write(2, "Hello C from Zig!", 17);
+    const c_res = c.write(2, "Hello C from Zig!", 17);
 
     // 让我们看看C的结果：
     std.debug.print(" - C result is {d} chars written.\n", .{c_res});

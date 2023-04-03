@@ -33,7 +33,7 @@ pub fn main() void {
 }
 
 // 请完成此函数，该函数打印表示圆的匿名结构体。
-fn printCircle(???) void {
+fn printCircle(circle: anytype) void {
     print("x:{} y:{} radius:{}\n", .{
         circle.center_x,
         circle.center_y,

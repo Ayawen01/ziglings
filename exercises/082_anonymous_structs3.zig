@@ -70,40 +70,40 @@ fn printTuple(tuple: anytype) void {
     //         @typeInfo(Circle).Struct.fields
     //
     // 这将是一个StructFields数组。
-    const fields = ???;
+    const fields = @typeInfo(@TypeOf(tuple)).Struct.fields;
 
     // 2. 循环遍历每个字段。这必须在编译时完成。
     //
     //     提示：记住“inline”循环？
     //
-    for (fields) |field| {
-    // 3. 打印字段的名称、类型和值。
-    //
-    //     此循环中的每个“field”都是以下之一：
-    //
-    //         pub const StructField = struct {
-    //             name: []const u8,
-    //             type: type,
-    //             default_value: anytype,
-    //             is_comptime: bool,
-    //             alignment: comptime_int,
-    //         };
-    //
-    //     您将需要此内置函数：
-    //
-    //         @field(lhs:anytype, comptime field_name:[]const u8)
-    //
-    //     第一个参数是要访问的值，第二个参数是带有要访问的字段名称的字符串。返回字段的值。
-    //
-    //     示例：
-    //
-    //         @field(foo, "x"); // 返回foo.x处的值
-    //
-    // 第一个字段应打印为：“0”（bool）：true
+    inline for (fields) |field| {
+        // 3. 打印字段的名称、类型和值。
+        //
+        //     此循环中的每个“field”都是以下之一：
+        //
+        //         pub const StructField = struct {
+        //             name: []const u8,
+        //             type: type,
+        //             default_value: anytype,
+        //             is_comptime: bool,
+        //             alignment: comptime_int,
+        //         };
+        //
+        //     您将需要此内置函数：
+        //
+        //         @field(lhs:anytype, comptime field_name:[]const u8)
+        //
+        //     第一个参数是要访问的值，第二个参数是带有要访问的字段名称的字符串。返回字段的值。
+        //
+        //     示例：
+        //
+        //         @field(foo, "x"); // 返回foo.x处的值
+        //
+        // 第一个字段应打印为：“0”（bool）：true
         print("\"{s}\"({any}):{any} ", .{
-            field.???,
-            field.???,
-            ???,
+            field.name,
+            field.type,
+            @field(tuple, field.name),
         });
     }
 }

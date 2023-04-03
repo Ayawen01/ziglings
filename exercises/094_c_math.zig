@@ -15,7 +15,7 @@ const std = @import("std");
 
 const c = @cImport({
     // 这里需要什么？
-    ???
+    @cInclude("math.h");
 });
 
 pub fn main() !void {
