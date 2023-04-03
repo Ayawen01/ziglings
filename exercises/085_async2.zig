@@ -1,24 +1,26 @@
 //
-// So, 'suspend' returns control to the place from which it was
-// called (the "call site"). How do we give control back to the
-// suspended function?
+// 所以，'suspend' 返回到调用它的地方（"调用站点"）。我们如何将控制权返回到被挂起的函数？
 //
-// For that, we have a new keyword called 'resume' which takes an
-// async function invocation's frame and returns control to it.
+// 为此，我们有一个新关键字叫做 'resume'，它接受异步函数调用的帧并将控制权返回给它。
 //
-//     fn fooThatSuspends() void {
-//         suspend {}
-//     }
+// 定义一个挂起函数fooThatSuspends()：
+// fn fooThatSuspends() void {
+//     suspend {} // 挂起函数
+// }
 //
-//     var foo_frame = async fooThatSuspends();
-//     resume foo_frame;
+// 创建一个协程对象foo_frame并执行fooThatSuspends()：
+// var foo_frame = async fooThatSuspends();
 //
-// See if you can make this program print "Hello async!".
+// 使用'resume'关键字将控制权返回给foo_frame：
+// resume foo_frame;
+//
+// 看看你能否使这个程序打印出 "Hello async!"。
 //
 const print = @import("std").debug.print;
 
 pub fn main() void {
     var foo_frame = async foo();
+    _ = foo_frame;
 }
 
 fn foo() void {

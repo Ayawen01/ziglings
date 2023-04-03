@@ -1,6 +1,5 @@
 //
-// An anonymous struct value LITERAL (not to be confused with a
-// struct TYPE) uses '.{}' syntax:
+// 匿名结构体值字面量（不要与结构体类型混淆）使用'.{}'语法：
 //
 //     .{
 //          .center_x = 15,
@@ -8,12 +7,9 @@
 //          .radius = 6,
 //     }
 //
-// These literals are always evaluated entirely at compile-time.
-// The example above could be coerced into the i32 variant of the
-// "circle struct" from the last exercise.
+// 这些字面量总是在编译时完全计算。上面的示例可以强制转换为上一个练习中的“圆形结构体”的i32变体。
 //
-// Or you can let them remain entirely anonymous as in this
-// example:
+// 或者您可以让它们完全匿名，就像这个例子一样：
 //
 //     fn bar(foo: anytype) void {
 //         print("a:{} b:{}\n", .{foo.a, foo.b});
@@ -24,7 +20,7 @@
 //         .b = false,
 //     });
 //
-// The example above prints "a:true b:false".
+// 上面的示例打印“a:true b:false”。
 //
 const print = @import("std").debug.print;
 
@@ -36,8 +32,7 @@ pub fn main() void {
     });
 }
 
-// Please complete this function which prints an anonymous struct
-// representing a circle.
+// 请完成此函数，该函数打印表示圆的匿名结构体。
 fn printCircle(???) void {
     print("x:{} y:{} radius:{}\n", .{
         circle.center_x,

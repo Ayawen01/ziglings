@@ -1,12 +1,9 @@
 //
-// It has probably not escaped your attention that we are no
-// longer capturing a return value from foo() because the 'async'
-// keyword returns the frame instead.
+// 可能你已经注意到，我们不再从foo()中捕获返回值，因为'async'关键字返回帧而不是值。
 //
-// One way to solve this is to use a global variable.
+// 解决这个问题的一种方法是使用全局变量。
 //
-// See if you can make this program print "1 2 3 4 5".
-//
+// 看看你能否使这个程序打印出 "1 2 3 4 5"。
 const print = @import("std").debug.print;
 
 var global_counter: i32 = 0;

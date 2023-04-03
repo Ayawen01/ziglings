@@ -1,36 +1,32 @@
 //
-// Struct types are always "anonymous" until we give them a name:
+// 结构体类型总是“匿名”的，直到我们给它们命名：
 //
 //     struct {};
 //
-// So far, we've been giving struct types a name like so:
+// 到目前为止，我们一直在给结构体类型命名，例如：
 //
 //     const Foo = struct {};
 //
-// * The value of @typeName(Foo) is "<filename>.Foo".
+// * @typeName(Foo) 的值为“<filename>.Foo”。
 //
-// A struct is also given a name when you return it from a
-// function:
+// 当您从函数中返回它时，结构体也会被命名：
 //
 //     fn Bar() type {
 //         return struct {};
 //     }
 //
-//     const MyBar = Bar();  // store the struct type
-//     const bar = Bar() {}; // create instance of the struct
+//     const MyBar = Bar();  // 存储结构体类型
+//     const bar = Bar() {}; // 创建结构体实例
 //
-// * The value of @typeName(Bar()) is "Bar()".
-// * The value of @typeName(MyBar) is "Bar()".
-// * The value of @typeName(@TypeOf(bar)) is "Bar()".
+// * @typeName(Bar()) 的值为“Bar()”。
+// * @typeName(MyBar) 的值为“Bar()”。
+// * @typeName(@TypeOf(bar)) 的值为“Bar()”。
 //
-// You can also have completely anonymous structs. The value
-// of @typeName(struct {}) is "struct:<position in source>".
+// 您还可以拥有完全匿名的结构体。@typeName(struct {}) 的值为“struct：<position in source>”。
 //
 const print = @import("std").debug.print;
 
-// This function creates a generic data structure by returning an
-// anonymous struct type (which will no longer be anonymous AFTER
-// it's returned from the function).
+// 此函数通过返回一个匿名的结构体类型（在从函数返回后将不再是匿名的）来创建通用数据结构。
 fn Circle(comptime T: type) type {
     return struct {
         center_x: T,
@@ -41,12 +37,10 @@ fn Circle(comptime T: type) type {
 
 pub fn main() void {
     //
-    // See if you can complete these two variable initialization
-    // expressions to create instances of circle struct types
-    // which can hold these values:
+    // 看看您是否可以完成这两个变量初始化表达式，以创建可以容纳以下值的圆形结构体类型：
     //
-    // * circle1 should hold i32 integers
-    // * circle2 should hold f32 floats
+    // * circle1 应该容纳 i32 整数
+    // * circle2 应该容纳 f32 浮点数
     //
     var circle1 = ??? {
         .center_x = 25,
@@ -75,11 +69,10 @@ pub fn main() void {
     });
 }
 
-// Perhaps you remember the "narcissistic fix" for the type name
-// in Ex. 065? We're going to do the same thing here: use a hard-
-// coded slice to return the type name. That's just so our output
-// look prettier. Indulge your vanity. Programmers are beautiful.
+// 或许您还记得 Ex. 065 中类型名称的“自恋修复”？
+// 我们在这里做同样的事情：使用硬编码的切片来返回类型名称。
+// 这只是为了让我们的输出看起来更漂亮。满足您的虚荣心。程序员很美丽。
 fn stripFname(mytype: []const u8) []const u8 {
     return mytype[22..];
 }
-// The above would be an instant red flag in a "real" program.
+// 上面的代码在“real”的程序中会立即引起注意。

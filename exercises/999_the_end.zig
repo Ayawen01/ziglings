@@ -1,5 +1,5 @@
-// This is the end for now!
-// More exercises will follow...
+// 到此为止！
+// 接下来会有更多的练习...
 
 const print = @import("std").debug.print;
 

@@ -1,6 +1,5 @@
 //
-// You can even create anonymous struct literals without field
-// names:
+// 您甚至可以创建没有字段名称的匿名结构体字面量：
 //
 //     .{
 //         false,
@@ -8,37 +7,30 @@
 //         @as(f64, 67.12)
 //     }
 //
-// We call these "tuples", which is a term used by many
-// programming languages for a data type with fields referenced
-// by index order rather than name. To make this possible, the Zig
-// compiler automatically assigns numeric field names 0, 1, 2,
-// etc. to the struct.
+// 我们称这些为“元组”，这是许多编程语言用于表示按索引顺序而不是名称引用的数据类型的术语。
+// 为了实现这一点，Zig编译器会自动将数字字段名称0、1、2等分配给结构体。
 //
-// Since bare numbers are not legal identifiers (foo.0 is a
-// syntax error), we have to quote them with the @"" syntax.
-// Example:
+// 由于裸数字不是合法标识符（foo.0是语法错误），我们必须使用@""语法引用它们。例如：
 //
 //     const foo = .{ true, false };
 //
 //     print("{} {}\n", .{foo.@"0", foo.@"1"});
 //
-// The example above prints "true false".
+// 上面的示例打印“true false”。
 //
-// Hey, WAIT A SECOND...
+// 等等...
 //
-// If a .{} thing is what the print function wants, do we need to
-// break our "tuple" apart and put it in another one? No! It's
-// redundant! This will print the same thing:
+// 如果.print()函数想要的是一个 .{} 东西，我们需要将我们的“元组”分开并放入另一个元组中吗？
+// 不需要！这将打印相同的内容：
 //
 //     print("{} {}\n", foo);
 //
-// Aha! So now we know that print() takes a "tuple". Things are
-// really starting to come together now.
+// 哈！所以现在我们知道print()需要一个“元组”。事情真的开始变得清晰起来了。
 //
 const print = @import("std").debug.print;
 
 pub fn main() void {
-    // A "tuple":
+    // 元组：
     const foo = .{
         true,
         false,
@@ -46,76 +38,68 @@ pub fn main() void {
         @as(f32, 3.141592),
     };
 
-    // We'll be implementing this:
+    // 我们将要实现这个：
     printTuple(foo);
 
-    // This is just for fun, because we can:
+    // 这只是为了好玩，因为我们可以：
     const nothing = .{};
     print("\n", nothing);
 }
 
-// Let's make our own generic "tuple" printer. This should take a
-// "tuple" and print out each field in the following format:
+// 让我们制作自己的通用“元组”打印机。这应该接受一个“元组”，并以以下格式打印出每个字段：
 //
-//     "name"(type):value
+//     “name”（type）：value
 //
-// Example:
+// 示例：
 //
-//     "0"(bool):true
+//     “0”（bool）：true
 //
-// You'll be putting this together. But don't worry, everything
-// you need is documented in the comments.
+// 您将把这些放在一起。但是不要担心，您需要的所有内容都在注释中记录下来了。
 fn printTuple(tuple: anytype) void {
-    // 1. Get a list of fields in the input 'tuple'
-    // parameter. You'll need:
+    // 1. 获取输入“元组”参数中的字段列表。您需要：
     //
-    //     @TypeOf() - takes a value, returns its type.
+    //     @TypeOf() - 获取值并返回其类型。
     //
-    //     @typeInfo() - takes a type, returns a TypeInfo union
-    //                   with fields specific to that type.
+    //     @typeInfo() - 获取类型并返回一个TypeInfo联合，
+    //                   其中包含特定于该类型的字段。
     //
-    //     The list of a struct type's fields can be found in
-    //     TypeInfo's Struct.fields.
+    //     结构体类型的列表可以在TypeInfo的Struct.fields中找到。
     //
-    //     Example:
+    //     示例：
     //
     //         @typeInfo(Circle).Struct.fields
     //
-    // This will be an array of StructFields.
+    // 这将是一个StructFields数组。
     const fields = ???;
 
-    // 2. Loop through each field. This must be done at compile
-    // time.
+    // 2. 循环遍历每个字段。这必须在编译时完成。
     //
-    //     Hint: remember 'inline' loops?
+    //     提示：记住“inline”循环？
     //
     for (fields) |field| {
-        // 3. Print the field's name, type, and value.
-        //
-        //     Each 'field' in this loop is one of these:
-        //
-        //         pub const StructField = struct {
-        //             name: []const u8,
-        //             type: type,
-        //             default_value: anytype,
-        //             is_comptime: bool,
-        //             alignment: comptime_int,
-        //         };
-        //
-        //     You'll need this builtin:
-        //
-        //         @field(lhs: anytype, comptime field_name: []const u8)
-        //
-        //     The first parameter is the value to be accessed,
-        //     the second parameter is a string with the name of
-        //     the field you wish to access. The value of the
-        //     field is returned.
-        //
-        //     Example:
-        //
-        //         @field(foo, "x"); // returns the value at foo.x
-        //
-        // The first field should print as: "0"(bool):true
+    // 3. 打印字段的名称、类型和值。
+    //
+    //     此循环中的每个“field”都是以下之一：
+    //
+    //         pub const StructField = struct {
+    //             name: []const u8,
+    //             type: type,
+    //             default_value: anytype,
+    //             is_comptime: bool,
+    //             alignment: comptime_int,
+    //         };
+    //
+    //     您将需要此内置函数：
+    //
+    //         @field(lhs:anytype, comptime field_name:[]const u8)
+    //
+    //     第一个参数是要访问的值，第二个参数是带有要访问的字段名称的字符串。返回字段的值。
+    //
+    //     示例：
+    //
+    //         @field(foo, "x"); // 返回foo.x处的值
+    //
+    // 第一个字段应打印为：“0”（bool）：true
         print("\"{s}\"({any}):{any} ", .{
             field.???,
             field.???,

@@ -1,8 +1,7 @@
 //
-// The power and purpose of async/await becomes more apparent
-// when we do multiple things concurrently. Foo and Bar do not
-// depend on each other and can happen at the same time, but End
-// requires that they both be finished.
+// 这是一个关于异步/等待的示例，
+// 它展示了在同时执行多个任务时异步/等待的强大和目的。
+// Foo和Bar互不依赖，可以同时发生，但End需要它们都完成。
 //
 //               +---------+
 //               |  Start  |
@@ -18,7 +17,7 @@
 //               |   End   |
 //               +---------+
 //
-// We can express this in Zig like so:
+// 我们可以这样用Zig来表达：
 //
 //     fn foo() u32 { ... }
 //     fn bar() u32 { ... }
@@ -33,8 +32,7 @@
 //
 //     // End
 //
-// Please await TWO page titles!
-//
+// 请等待两个页面标题！
 const print = @import("std").debug.print;
 
 pub fn main() void {
@@ -48,7 +46,7 @@ pub fn main() void {
 }
 
 fn getPageTitle(url: []const u8) []const u8 {
-    // Please PRETEND this is actually making a network request.
+    // 请假装这实际上正在进行网络请求。
     _ = url;
     return "Example Title";
 }

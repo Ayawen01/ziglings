@@ -1,55 +1,48 @@
-//
-// The Zig language is in rapid development and continuously improves
-// the language constructs steadily.
-//
-// Since version 0.11, the "for-loops" widely used in other languages
-// such as C, e.g. "for (int i = 0; i < 10..." can now also be formed
-// similarly in Zig, which previously required a "while" construct.
-// Similar in this case actually means better, just as Zig generally
-// tries to make everything simple and "better".
-//
-// These new "for-loops" look like the following in Zig:
+// 
+// Zig语言正在快速发展，并不断稳步改进语言结构。
+// 自版本0.11以来，其他语言中广泛使用的“for循环”，
+// 例如C中的“for（int i = 0; i <10 ...”，
+// 现在也可以在Zig中类似地形成，这以前需要一个“while”结构。
+// 在这种情况下，类似实际上意味着更好，
+// 就像Zig通常试图使一切变得简单和“更好”一样。
+// 
+// 这些新的“for循环”在Zig中如下所示：
 //
 //           for (0..10) |idx| {
-//               // In this case 'idx' takes all values from 0 to 9.
+//               // 在这种情况下，“idx”取值范围为0到9。
 //           }
 //
-// This is really simple and can replace the previous, somewhat bulky:
+// 这真的很简单，可以替换以前有点笨重的：
 //
-//           var idx: usize = 0;
-//           while (idx < 10) : (idx += 1) {
-//               // Again, idx takes all values from 0 to 9.
+//           var idx：usize = 0;
+//           while（idx <10）：（idx + = 1）{
+//               // 再次，idx取所有值从0到9。
 //           }
 //
-// This would also simplify exercise 13, for example.
-// The best way to try this out is to use this exercise, which in the
-// original looks like this:
+// 这也将简化练习13，例如。尝试这个的最佳方法是使用此练习，在原始练习中如下所示：
 //
 //            ...
-//            var n: u32 = 1;
+//            var n：u32 = 1;
 //
-//            // I want to print every number between 1 and 20 that is NOT
-//            // divisible by 3 or 5.
-//            while (n <= 20) : (n += 1) {
-//                // The '%' symbol is the "modulo" operator and it
-//                // returns the remainder after division.
-//                if (n % 3 == 0) continue;
-//                if (n % 5 == 0) continue;
-//                std.debug.print("{} ", .{n});
+//            //我想打印出1到20之间不可被3或5整除的每个数字。
+//            while（n <=20）：（n + = 1）{
+//                // “％”符号是“模数”运算符，它
+//                // 返回除法后的余数。
+//                if（n％3 == 0）continue;
+//                if（n％5 == 0）continue;
+//                std.debug.print（“{}”，.{n}）;
 //            }
 //            ...
 //
 const std = @import("std");
 
-// And now with the new "for-loop".
+// 现在有了新的“for循环”。
 pub fn main() void {
 
-    // I want to print every number between 1 and 20 that is NOT
-    // divisible by 3 or 5.
+    // 我想打印出1到20之间不可被3或5整除的每个数字。
     for (???) |n| {
 
-        // The '%' symbol is the "modulo" operator and it
-        // returns the remainder after division.
+        // “％”符号是“模数”运算符，它返回除法后的余数。
         if (n % 3 == 0) continue;
         if (n % 5 == 0) continue;
         std.debug.print("{} ", .{n});
@@ -58,7 +51,5 @@ pub fn main() void {
     std.debug.print("\n", .{});
 }
 
-// Is actually a little easier. The interesting thing here is that the other
-// previous 'while' exercises (11,12, 14) cannot be simplified by this
-// new "for-loop". Therefore it is good to be able to use both variations
-// accordingly.
+// 实际上更容易。有趣的是，其他以前的'while'练习（11,12,14）不能通过此新的“for循环”简化。
+// 因此，根据需要使用两种变体是很好的。

@@ -1,31 +1,23 @@
 //
-// Remember our ant and bee simulator constructed with unions
-// back in exercises 55 and 56? There, we demonstrated that
-// unions allow us to treat different data types in a uniform
-// manner.
+// 记得我们之前在练习55和56中使用联合体构建的蚂蚁和蜜蜂模拟器吗？
+// 我们展示了联合体如何以统一的方式处理不同的数据类型。
 //
-// One neat feature was using tagged unions to create a single
-// function to print a status for ants *or* bees by switching:
+// 其中一个很棒的特性是使用标记联合体来创建一个单一函数，通过switch语句来打印蚂蚁或蜜蜂的状态：
 //
 //   switch (insect) {
 //      .still_alive => ...      // (print ant stuff)
 //      .flowers_visited => ...  // (print bee stuff)
 //   }
 //
-// Well, that simulation was running just fine until a new insect
-// arrived in the virtual garden, a grasshopper!
+// 这个模拟器一直运行得很好，直到一个新的昆虫——蚂蚱出现在虚拟花园中！
 //
-// Doctor Zoraptera started to add grasshopper code to the
-// program, but then she backed away from her keyboard with an
-// angry hissing sound. She had realized that having code for
-// each insect in one place and code to print each insect in
-// another place was going to become unpleasant to maintain when
-// the simulation expanded to hundreds of different insects.
+// Zoraptera博士开始添加蚂蚱代码，但是她突然停下了，发出了一声愤怒的嘶嘶声。
+// 她意识到，在一个地方编写每个昆虫的代码，在另一个地方编写每个昆虫的打印代码，
+// 当模拟器扩展到数百种不同的昆虫时，这种方式将变得难以维护。
 //
-// Thankfully, Zig has another comptime feature we can use
-// to get out of this dilema called the 'inline else'.
+// 幸运的是，Zig有另一个编译时特性可以帮助我们摆脱这个困境——'inline else'。
 //
-// We can replace this redundant code:
+// 我们可以用以下代码替换这些冗余代码：
 //
 //   switch (thing) {
 //       .a => |a| special(a),
@@ -36,20 +28,18 @@
 //       ...
 //   }
 //
-// With:
+// 使用以下代码：
 //
 //   switch (thing) {
 //       .a => |a| special(a),
 //       inline else |t| => normal(t),
 //   }
 //
-// We can have special handling of some cases and then Zig
-// handles the rest of the matches for us.
+// 我们可以对一些情况进行特殊处理，然后Zig会为我们处理其他匹配项。
 //
-// With this feature, you decide to make an Insect union with a
-// single uniform 'print()' function. All of the insects can
-// then be responsible for printing themselves. And Doctor
-// Zoraptera can calm down and stop gnawing on the furniture.
+// 借助这个特性，你决定创建一个Insect联合体，
+// 并为其定义一个统一的'print()'函数。
+// 所有昆虫都可以负责打印自己。Zoraptera博士可以放心了。
 //
 const std = @import("std");
 
@@ -69,8 +59,7 @@ const Bee = struct {
     }
 };
 
-// Here's the new grasshopper. Notice how we've also added print
-// methods to each insect.
+// 这里是新的蚂蚱。注意我们还为每个昆虫添加了打印方法。
 const Grasshopper = struct {
     distance_hopped: u16,
 
@@ -84,10 +73,8 @@ const Insect = union(enum) {
     bee: Bee,
     grasshopper: Grasshopper,
 
-    // Thanks to 'inline else', we can think of this print() as
-    // being an interface method. Any member of this union with
-    // with a print() method can be treated uniformly by outside
-    // code without needing to know any other details. Cool!
+    // 由于“inline else”的存在，我们可以将此print()视为接口方法。
+    // 具有print()方法的此联合的任何成员都可以被外部代码统一处理，而无需了解任何其他细节。很酷！
     pub fn print(self: Insect) void {
         switch (self) {
             inline else => |case| return case.print(),
@@ -104,24 +91,16 @@ pub fn main() !void {
 
     std.debug.print("Daily Insect Report:\n", .{});
     for (my_insects) |insect| {
-        // Almost done! We want to print() each insect with a
-        // single method call here.
+        // 快完成了！我们想要使用单个方法调用print()每个昆虫。
         ???
     }
 }
 
-// Our print() method in the Insect union above demonstrates
-// something very similar to the object-oriented concept of an
-// abstract data type. That is, the Insect type doesn't contain
-// the underlying data, and the print() function doesn't
-// actually do the printing.
+// 上面的Insect联合中的print()方法演示了与面向对象概念非常相似的东西：抽象数据类型。
+// 也就是说，Insect类型不包含底层数据，而print()函数实际上并不执行打印操作。
 //
-// The point of an interface is to support generic programming:
-// the ability to treat different things as if they were the
-// same to cut down on clutter and conceptual complexity.
+// 接口的目的是支持通用编程：将不同的事物视为相同以减少杂乱和概念上的复杂性。
 //
-// The Daily Insect Report doesn't need to worry about *which*
-// insects are in the report - they all print the same way via
-// the interface!
+// 每日昆虫报告不需要担心报告中有哪些昆虫-它们都通过接口以相同方式打印！
 //
-// Doctor Zoraptera loves it.
+// Zoraptera医生很喜欢它。
